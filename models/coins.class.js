@@ -1,5 +1,7 @@
 class Coin extends MovableObject {
   IMAGES_FLOATING_COIN = ["./img/8_coin/coin_1.png"];
+  height = 100;
+  width = 100;
 
   constructor() {
     super().loadImage(this.IMAGES_FLOATING_COIN[0]);

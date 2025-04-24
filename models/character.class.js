@@ -4,6 +4,14 @@ class Character extends MovableObject {
   // y = 180;
   y = 0;
   speed = 5;
+  HP = 100;
+  energy = 0;
+  offset = {
+    top: 50,
+    bottom: 0,
+    left: 30,
+    right: 50,
+  };
   IMAGES_IDLE = [
     "./img/2_character_pepe/1_idle/idle/I-1.png",
     "./img/2_character_pepe/1_idle/idle/I-2.png",
@@ -43,7 +51,6 @@ class Character extends MovableObject {
     this.loadImages(this.IMAGES_IDLE);
     this.loadImages(this.IMAGES_JUMPING);
 
-    // this.walking();
     this.animate();
     this.applyGravity(180);
   }

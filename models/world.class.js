@@ -12,6 +12,7 @@ class World {
     this.keyboard = keyboard;
     this.draw();
     this.setWorld();
+    this.checkCollisons();
   }
 
   setWorld() {
@@ -23,6 +24,17 @@ class World {
     // this.level.enemies.forEach((enemie) => enemie.animate());
   }
 
+  checkCollisons() {
+    setInterval(() => {
+      this.level.enemies.forEach((enemy) => {
+        if (this.character.isColliding(enemy) && !this.character.isDead(this.character)) {
+          this.character.HP -= 10;
+          console.log(this.character.HP);
+        }
+      });
+    }, 100);
+  }
+
   draw() {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
@@ -31,7 +43,6 @@ class World {
     this.update(); // animate all
     this.addObjectsToMap(this.level.background);
     this.addObjectsToMap(this.level.clouds);
-    // this.addObjectsToMap(this.level.bottle);
     this.addObjectsToMap(this.level.collectable);
     this.addMapObject(this.character);
     this.addObjectsToMap(this.level.enemies);
@@ -53,13 +64,19 @@ class World {
 
   addMapObject(mo) {
     if (mo.otherDirection) {
-      this.ctx.save(); // aktuellen Zustand merken
-      this.ctx.translate(mo.x + mo.width, 0);
-      this.ctx.scale(-1, 1);
-      this.ctx.drawImage(mo.img, 0, mo.y, mo.width, mo.height);
-      this.ctx.restore(); // Zustand zurücksetzen
+      this.flipImage(mo);
     } else {
       this.ctx.drawImage(mo.img, mo.x, mo.y, mo.width, mo.height);
     }
+
+    mo.drawFrame(this.ctx);
+  }
+
+  flipImage(mo) {
+    this.ctx.save(); // aktuellen Zustand merken
+    this.ctx.translate(mo.x + mo.width, 0);
+    this.ctx.scale(-1, 1);
+    this.ctx.drawImage(mo.img, 0, mo.y, mo.width, mo.height);
+    this.ctx.restore(); // Zustand zurücksetzen
   }
 }

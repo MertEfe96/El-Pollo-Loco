@@ -13,15 +13,6 @@ class Keyboard {
     KeyW: "UP",
   };
 
-  // action(key) {
-  //   const direction = this.keyMap[key];
-  //   if (direction) {
-  //     for (const dir of Object.values(this.keyMap)) {
-  //       this[dir] = dir === direction;
-  //     }
-  //   }
-  // }
-
   action(key) {
     const direction = this.keyMap[key];
     if (direction) {
@@ -30,12 +21,6 @@ class Keyboard {
     }
   }
 
-  // release(key) {
-  //   const direction = this.keyMap[key];
-  //   if (direction) {
-  //     this[direction] = false;
-  //   }
-  // }
   release(key) {
     const direction = this.keyMap[key];
     if (direction) {

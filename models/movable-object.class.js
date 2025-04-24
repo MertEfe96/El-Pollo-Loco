@@ -8,6 +8,12 @@ class MovableObject {
   img;
   imageCache = {};
   currentImage = 0;
+  offset = {
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
+  };
 
   loadImage(path) {
     this.img = new Image();
@@ -20,10 +26,6 @@ class MovableObject {
       img.src = path;
       this.imageCache[path] = img;
     });
-  }
-
-  moveRight() {
-    console.log("Moving right");
   }
 
   moveLeft() {
@@ -68,5 +70,35 @@ class MovableObject {
 
   isAboveGround(minY) {
     return this.y < minY;
+  }
+
+  drawFrame(ctx) {
+    if (this instanceof Character || this instanceof Chicken || this instanceof Coin || this instanceof Bottle) {
+      ctx.beginPath();
+      ctx.lineWitdh = "5";
+      ctx.strokeStyle = "blue";
+      ctx.rect(this.x, this.y, this.width, this.height);
+      ctx.stroke();
+    }
+  }
+
+  isColliding(obj) {
+    return (
+      this.x + this.width - this.offset.right >= obj.x + obj.offset.left && // R > L
+      this.x + this.offset.left <= obj.x + obj.width - obj.offset.right && // L > R
+      this.y + this.height - this.offset.bottom >= obj.y + obj.offset.top && // U > O
+      this.y + this.offset.top <= obj.y + obj.height - obj.offset.bottom // O > U
+    );
+  }
+
+  isDead() {
+    if (this.HP <= 1) {
+      this.playDead();
+      return true;
+    }
+  }
+
+  playDead() {
+    console.log("dead");
   }
 }
