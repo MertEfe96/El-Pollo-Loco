@@ -1,6 +1,9 @@
 let canvas;
 let world;
 let keyboard = new Keyboard();
+const kb = {
+  pressed: {},
+};
 
 function init() {
   canvas = document.getElementById("canvas");
@@ -11,12 +14,16 @@ function init() {
 
 window.addEventListener("keydown", (event) => {
   const key = event.code;
+  kb.pressed[key] = true;
   keyboard.action(key);
+  updateKeyStatus(); // neu
 });
 
 window.addEventListener("keyup", (event) => {
   const key = event.code;
+  kb.pressed[key] = false;
   keyboard.release(key);
+  updateKeyStatus(); // neu
 });
 
 function generateCoins(amount, minHorizontalDistance) {
@@ -62,4 +69,11 @@ function generateCoinsInArc(centerX, centerY, radius, count) {
   }
 
   return coins;
+}
+
+function updateKeyStatus() {
+  const pressedKeys = Object.keys(kb.pressed)
+    .filter((key) => kb.pressed[key])
+    .join(", ");
+  document.getElementById("key-status").textContent = pressedKeys || "---";
 }

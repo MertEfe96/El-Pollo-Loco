@@ -4,6 +4,7 @@ class Keyboard {
   UP = false;
   DOWN = false;
   SPACE = false;
+  pressedKeys = new Set();
   keyMap = {
     Space: "SPACE",
     KeyD: "RIGHT",
@@ -12,18 +13,33 @@ class Keyboard {
     KeyW: "UP",
   };
 
+  // action(key) {
+  //   const direction = this.keyMap[key];
+  //   if (direction) {
+  //     for (const dir of Object.values(this.keyMap)) {
+  //       this[dir] = dir === direction;
+  //     }
+  //   }
+  // }
+
   action(key) {
     const direction = this.keyMap[key];
     if (direction) {
-      for (const dir of Object.values(this.keyMap)) {
-        this[dir] = dir === direction;
-      }
+      this.pressedKeys.add(direction);
+      this[direction] = true;
     }
   }
 
+  // release(key) {
+  //   const direction = this.keyMap[key];
+  //   if (direction) {
+  //     this[direction] = false;
+  //   }
+  // }
   release(key) {
     const direction = this.keyMap[key];
     if (direction) {
+      this.pressedKeys.delete(direction);
       this[direction] = false;
     }
   }

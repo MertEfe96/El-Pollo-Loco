@@ -48,45 +48,6 @@ class Character extends MovableObject {
     this.applyGravity(180);
   }
 
-  jump() {}
-  // animate() {
-  //   setInterval(() => {
-  //     const keyboard = this.world.keyboard;
-  //     if (keyboard.RIGHT && this.x < 2800) {
-  //       this.x += this.speed;
-  //       this.otherDirection = false;
-  //     }
-  //     if (keyboard.LEFT && this.x > -150) {
-  //       this.x -= this.speed;
-  //       this.otherDirection = true;
-  //     }
-  //     if (this.x < 2285) {
-  //       this.world.camera_x = -this.x + 50;
-  //     }
-  //   }, 1000 / 60);
-  //   setInterval(() => {
-  //     const keyboard = this.world.keyboard;
-  //     if (
-  //       !keyboard.LEFT &&
-  //       !keyboard.RIGHT &&
-  //       !keyboard.UP &&
-  //       !keyboard.DOWN &&
-  //       !keyboard.SPACE &&
-  //       !this.isAboveGround(180)
-  //     ) {
-  //       this.idleAnimation();
-  //     }
-  //     if ((keyboard.RIGHT || keyboard.LEFT) && !this.isAboveGround(180)) {
-  //       this.moveChar();
-  //     }
-  //     if (keyboard.SPACE && !this.isAboveGround(180)) {
-  //       this.speedY = -15;
-  //       console.log(this.speedY);
-  //       this.jumpAnimation();
-  //     }
-  //   }, 1000 / 7);
-  // }
-
   animate() {
     setInterval(() => this.handleMovement(), 1000 / 60);
     setInterval(() => this.handleAnimation(), 1000 / 7);
@@ -132,16 +93,18 @@ class Character extends MovableObject {
   }
 
   jumpAnimation() {
+    const interval = 4;
     setInterval(() => {
       if (this.y > 140 && this.y < 180) {
         this.y += this.speedY;
         this.speedY -= this.acceleration;
       }
-    }, 1000 / 6);
+    }, 1000 / 4);
     setInterval(() => {
-      if (this.y > 50 && this.y < 180) {
+      if (this.y < 180) {
         this.playAnimation(this.IMAGES_JUMPING);
       }
-    }, 1000 / 5);
+    }, 1000 / 1);
+    console.log(interval);
   }
 }
