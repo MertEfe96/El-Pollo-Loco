@@ -91,14 +91,38 @@ class MovableObject {
     );
   }
 
+  isTakingDMG(obj) {
+    if (
+      (this.x + this.width - this.offset.right >= obj.x + obj.offset.left ||
+        this.x + this.offset.left <= obj.x + obj.width - obj.offset.right) &&
+      this.HP > 0
+    ) {
+      this.HP -= 5;
+    }
+  }
+
   isDead() {
     if (this.HP <= 1) {
-      this.playDead();
+      this.statusDead = true;
+      this.playDead(this);
       return true;
     }
   }
 
-  playDead() {
+  playDead(char) {
     console.log("dead");
+    char.currentImage = 0;
+    let i = 0;
+    const intervalId = setInterval(() => {
+      char.playAnimation(char.IMAGES_DEATH);
+      i++;
+      if (i === 7) {
+        clearInterval(intervalId);
+      }
+    }, 1000 / 1);
+  }
+
+  clearImageCache() {
+    this.imageCache = {};
   }
 }

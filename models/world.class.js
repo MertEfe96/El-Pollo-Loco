@@ -26,12 +26,13 @@ class World {
 
   checkCollisons() {
     setInterval(() => {
-      this.level.enemies.forEach((enemy) => {
-        if (this.character.isColliding(enemy) && !this.character.isDead(this.character)) {
-          this.character.HP -= 10;
-          console.log(this.character.HP);
-        }
-      });
+      if (!this.character.statusDead) {
+        this.level.enemies.forEach((enemy) => {
+          if (this.character.isColliding(enemy) && !this.character.isDead(this.character)) {
+            this.character.isTakingDMG(enemy);
+          }
+        });
+      }
     }, 100);
   }
 

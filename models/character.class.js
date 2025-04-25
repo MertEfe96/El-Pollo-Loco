@@ -6,6 +6,7 @@ class Character extends MovableObject {
   speed = 5;
   HP = 100;
   energy = 0;
+  statusDead = false;
   offset = {
     top: 50,
     bottom: 0,
@@ -43,6 +44,15 @@ class Character extends MovableObject {
     "./img/2_character_pepe/3_jump/J-38.png",
     "./img/2_character_pepe/3_jump/J-39.png",
   ];
+  IMAGES_DEATH = [
+    "./img/2_character_pepe/5_dead/D-52.png",
+    "./img/2_character_pepe/5_dead/D-53.png",
+    "./img/2_character_pepe/5_dead/D-54.png",
+    "./img/2_character_pepe/5_dead/D-51.png",
+    "./img/2_character_pepe/5_dead/D-55.png",
+    "./img/2_character_pepe/5_dead/D-56.png",
+    "./img/2_character_pepe/5_dead/D-57.png",
+  ];
   world;
 
   constructor() {
@@ -50,6 +60,7 @@ class Character extends MovableObject {
     this.loadImages(this.IMAGES_WALKING);
     this.loadImages(this.IMAGES_IDLE);
     this.loadImages(this.IMAGES_JUMPING);
+    this.loadImages(this.IMAGES_DEATH);
 
     this.animate();
     this.applyGravity(180);
@@ -62,15 +73,15 @@ class Character extends MovableObject {
 
   handleMovement() {
     const {RIGHT, LEFT} = this.world.keyboard;
-    if (RIGHT && this.x < 2800) {
+    if (RIGHT && this.x < 2800 && !this.statusDead) {
       this.x += this.speed;
       this.otherDirection = false;
     }
-    if (LEFT && this.x > -150) {
+    if (LEFT && this.x > -150 && !this.statusDead) {
       this.x -= this.speed;
       this.otherDirection = true;
     }
-    if (this.x < 2285) {
+    if (this.x < 2285 && !this.statusDead) {
       this.world.camera_x = -this.x + 50;
     }
   }
@@ -78,13 +89,13 @@ class Character extends MovableObject {
   handleAnimation() {
     const k = this.world.keyboard;
     const noKeyPressed = !k.LEFT && !k.RIGHT && !k.UP && !k.DOWN && !k.SPACE;
-    if (noKeyPressed && !this.isAboveGround(180)) {
+    if (noKeyPressed && !this.isAboveGround(180) && !this.statusDead) {
       this.idleAnimation();
     }
-    if ((k.RIGHT || k.LEFT) && !this.isAboveGround(180)) {
+    if ((k.RIGHT || k.LEFT) && !this.isAboveGround(180) && !this.statusDead) {
       this.moveChar();
     }
-    if (k.SPACE && !this.isAboveGround(180)) {
+    if (k.SPACE && !this.isAboveGround(180) && !this.statusDead) {
       this.speedY = -15;
       console.log(this.speedY);
       this.jumpAnimation();
@@ -100,18 +111,19 @@ class Character extends MovableObject {
   }
 
   jumpAnimation() {
-    const interval = 4;
-    setInterval(() => {
+    this.currentImage = 0;
+    clearInterval(this.jumpMoveInterval);
+    clearInterval(this.jumpAnimInterval);
+    this.jumpMoveInterval = setInterval(() => {
       if (this.y > 140 && this.y < 180) {
         this.y += this.speedY;
         this.speedY -= this.acceleration;
       }
     }, 1000 / 4);
-    setInterval(() => {
+    this.jumpAnimInterval = setInterval(() => {
       if (this.y < 180) {
         this.playAnimation(this.IMAGES_JUMPING);
       }
-    }, 1000 / 1);
-    console.log(interval);
+    }, 1000 / 8);
   }
 }
