@@ -77,7 +77,12 @@ class MovableObject {
       ctx.beginPath();
       ctx.lineWitdh = "5";
       ctx.strokeStyle = "blue";
-      ctx.rect(this.x, this.y, this.width, this.height);
+      ctx.rect(
+        this.x + this.offset.left,
+        this.y + this.offset.top,
+        this.width - this.offset.right,
+        this.height - this.offset.bottom
+      );
       ctx.stroke();
     }
   }
@@ -97,7 +102,8 @@ class MovableObject {
         this.x + this.offset.left <= obj.x + obj.width - obj.offset.right) &&
       this.HP > 0
     ) {
-      this.HP -= 5;
+      this.HP -= 2;
+      this.playAnimation(this.IMAGES_HURT);
     }
   }
 
@@ -119,10 +125,11 @@ class MovableObject {
       if (i === 7) {
         clearInterval(intervalId);
       }
-    }, 1000 / 1);
+    }, 1000 / 2);
   }
 
   clearImageCache() {
     this.imageCache = {};
   }
+  a;
 }

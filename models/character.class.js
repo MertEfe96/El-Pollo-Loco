@@ -1,5 +1,5 @@
 class Character extends MovableObject {
-  width = 175;
+  width = 150;
   height = 250;
   // y = 180;
   y = 0;
@@ -7,9 +7,11 @@ class Character extends MovableObject {
   HP = 100;
   energy = 0;
   statusDead = false;
+  collectedCoins = 0;
+  collectedBottles = 0;
   offset = {
-    top: 50,
-    bottom: 0,
+    top: 110,
+    bottom: 30,
     left: 30,
     right: 50,
   };
@@ -44,6 +46,11 @@ class Character extends MovableObject {
     "./img/2_character_pepe/3_jump/J-38.png",
     "./img/2_character_pepe/3_jump/J-39.png",
   ];
+  IMAGES_HURT = [
+    "./img/2_character_pepe/4_hurt/H-41.png",
+    "./img/2_character_pepe/4_hurt/H-42.png",
+    "./img/2_character_pepe/4_hurt/H-43.png",
+  ];
   IMAGES_DEATH = [
     "./img/2_character_pepe/5_dead/D-52.png",
     "./img/2_character_pepe/5_dead/D-53.png",
@@ -59,6 +66,7 @@ class Character extends MovableObject {
     super().loadImage("./img/2_character_pepe/1_idle/idle/I-1.png");
     this.loadImages(this.IMAGES_WALKING);
     this.loadImages(this.IMAGES_IDLE);
+    this.loadImages(this.IMAGES_HURT);
     this.loadImages(this.IMAGES_JUMPING);
     this.loadImages(this.IMAGES_DEATH);
 
@@ -99,6 +107,10 @@ class Character extends MovableObject {
       this.speedY = -15;
       console.log(this.speedY);
       this.jumpAnimation();
+    }
+    if (k.THROW && !this.isAboveGround(180) && !this.statusDead && this.collectedBottles > 0) {
+      this.collectedBottles -= 1;
+      console.log("throw");
     }
   }
 

@@ -3,6 +3,8 @@ let world;
 let keyboard = new Keyboard();
 const kb = {
   pressed: {},
+  key: {},
+  code: {},
 };
 
 function init() {

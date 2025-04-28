@@ -10,6 +10,7 @@ class World {
     this.ctx = canvas.getContext("2d");
     this.canvas = canvas;
     this.keyboard = keyboard;
+    this.statusBar = new StatusBar(this.character);
     this.draw();
     this.setWorld();
     this.checkCollisons();
@@ -27,13 +28,37 @@ class World {
   checkCollisons() {
     setInterval(() => {
       if (!this.character.statusDead) {
-        this.level.enemies.forEach((enemy) => {
-          if (this.character.isColliding(enemy) && !this.character.isDead(this.character)) {
-            this.character.isTakingDMG(enemy);
-          }
-        });
+        this.collisionEnemie();
+        this.collisionCollectable();
       }
     }, 100);
+  }
+
+  collisionEnemie() {
+    this.level.enemies.forEach((enemy) => {
+      if (this.character.isColliding(enemy) && !this.character.isDead(this.character)) {
+        this.character.isTakingDMG(enemy);
+      }
+    });
+  }
+
+  collisionCollectable() {
+    this.level.collectable.forEach((collectable) => {
+      if (this.character.isColliding(collectable) && !this.character.isDead(this.character)) {
+        if (collectable instanceof Coin) {
+          this.character.collectedCoins += 1;
+          console.log(this.character.collectedCoins + " Coins eingesammelt!");
+        }
+
+        if (collectable instanceof Bottle) {
+          this.character.collectedBottles += 1;
+          console.log(this.character.collectedBottles + " Bottles eingesammelt!");
+        }
+
+        // Delete Collectable
+        this.level.collectable = this.level.collectable.filter((obj) => obj !== collectable);
+      }
+    });
   }
 
   draw() {
@@ -49,6 +74,8 @@ class World {
     this.addObjectsToMap(this.level.enemies);
 
     this.ctx.translate(-this.camera_x, 0);
+
+    this.statusBar.drawStatus(this.ctx);
 
     // draw() is beeing repeatedly done
     let self = this;

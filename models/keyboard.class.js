@@ -4,6 +4,7 @@ class Keyboard {
   UP = false;
   DOWN = false;
   SPACE = false;
+  THROW = false;
   pressedKeys = new Set();
   keyMap = {
     Space: "SPACE",
@@ -11,6 +12,7 @@ class Keyboard {
     KeyA: "LEFT",
     KeyS: "DOWN",
     KeyW: "UP",
+    KeyE: "THROW",
   };
 
   action(key) {
