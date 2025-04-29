@@ -9,6 +9,9 @@ class Character extends MovableObject {
   statusDead = false;
   collectedCoins = 0;
   collectedBottles = 0;
+  lastHitTime = 0;
+  invincibilityDuration = 1000;
+  isTouchingEnemy = false;
   offset = {
     top: 110,
     bottom: 30,
@@ -69,6 +72,8 @@ class Character extends MovableObject {
     this.loadImages(this.IMAGES_HURT);
     this.loadImages(this.IMAGES_JUMPING);
     this.loadImages(this.IMAGES_DEATH);
+
+    this.hurtSound = new Audio("./audio/Death/homemadeoof-47509.mp3");
 
     this.animate();
     this.applyGravity(180);

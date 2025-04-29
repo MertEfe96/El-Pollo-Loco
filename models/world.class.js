@@ -35,9 +35,13 @@ class World {
   }
 
   collisionEnemie() {
+    const now = new Date().getTime();
     this.level.enemies.forEach((enemy) => {
       if (this.character.isColliding(enemy) && !this.character.isDead(this.character)) {
         this.character.isTakingDMG(enemy);
+      }
+      if (now - this.character.lastHitTime > this.character.invincibilityDuration) {
+        this.character.isTouchingEnemy = false;
       }
     });
   }
@@ -47,12 +51,10 @@ class World {
       if (this.character.isColliding(collectable) && !this.character.isDead(this.character)) {
         if (collectable instanceof Coin) {
           this.character.collectedCoins += 1;
-          console.log(this.character.collectedCoins + " Coins eingesammelt!");
         }
 
         if (collectable instanceof Bottle) {
           this.character.collectedBottles += 1;
-          console.log(this.character.collectedBottles + " Bottles eingesammelt!");
         }
 
         // Delete Collectable

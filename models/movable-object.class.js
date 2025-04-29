@@ -97,13 +97,23 @@ class MovableObject {
   }
 
   isTakingDMG(obj) {
+    const now = new Date().getTime();
     if (
       (this.x + this.width - this.offset.right >= obj.x + obj.offset.left ||
         this.x + this.offset.left <= obj.x + obj.width - obj.offset.right) &&
       this.HP > 0
     ) {
       this.HP -= 2;
+      this.lastHitTime = now;
       this.playAnimation(this.IMAGES_HURT);
+      if (!this.isTouchingEnemy) {
+        // Nur beim ersten Kontakt der aktuellen Berührung abspielen
+        this.isTouchingEnemy = true;
+        if (this.hurtSound) {
+          this.hurtSound.currentTime = 0;
+          this.hurtSound.play();
+        }
+      }
     }
   }
 

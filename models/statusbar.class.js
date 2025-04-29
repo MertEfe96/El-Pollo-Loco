@@ -17,7 +17,7 @@ class StatusBar {
   }
 
   drawStatus(ctx) {
-    ctx.fillStyle = "rgba(0, 0, 0, 0.24)";
+    ctx.fillStyle = "rgba(0, 0, 0, 0)";
     ctx.fillRect(this.x, this.y, 220, 100);
 
     // Herz (HP)
