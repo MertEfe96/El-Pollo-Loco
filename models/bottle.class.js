@@ -1,6 +1,8 @@
 class Bottle extends MovableObject {
   x = 100;
   y = 330;
+  speedX = 30;
+  speedY = 30;
   height = 75;
   width = 75;
   IMAGES_BOTTLE_GROUND = [
@@ -28,5 +30,9 @@ class Bottle extends MovableObject {
     this.x = 250 + Math.random() * 1500;
     this.y = 330 - Math.random() * 200;
     this.animateRotation(this.IMAGES_BOTTLE_GROUND);
+  }
+
+  throwBottle() {
+    console.log("throw");
   }
 }

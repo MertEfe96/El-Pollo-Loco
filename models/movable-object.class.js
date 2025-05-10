@@ -1,32 +1,14 @@
-class MovableObject {
-  x = 100;
-  y = 270;
-  height = 150;
-  width = 100;
+class MovableObject extends DrawableObject {
   speedY = 0;
+  speedX = 0;
+  HP = 40;
   acceleration = 1;
-  img;
-  imageCache = {};
-  currentImage = 0;
   offset = {
     top: 0,
     bottom: 0,
     left: 0,
     right: 0,
   };
-
-  loadImage(path) {
-    this.img = new Image();
-    this.img.src = path;
-  }
-
-  loadImages(arr) {
-    arr.forEach((path) => {
-      let img = new Image();
-      img.src = path;
-      this.imageCache[path] = img;
-    });
-  }
 
   moveLeft() {
     this.x -= this.speed;
@@ -107,20 +89,30 @@ class MovableObject {
       this.lastHitTime = now;
       this.playAnimation(this.IMAGES_HURT);
       if (!this.isTouchingEnemy) {
-        // Nur beim ersten Kontakt der aktuellen Berührung abspielen
-        this.isTouchingEnemy = true;
-        if (this.hurtSound) {
-          this.hurtSound.currentTime = 0;
-          this.hurtSound.play();
-        }
+        this.playSound(this);
       }
     }
   }
 
+  playSound(mo) {
+    mo.isTouchingEnemy = true;
+    if (mo.hurtSound) {
+      mo.hurtSound.currentTime = 0;
+      mo.hurtSound.play();
+    } else if (mo.deathSound) {
+      mo.deathSound.currentTime = 0;
+      mo.deathSound.play();
+    }
+  }
+
   isDead() {
-    if (this.HP <= 1) {
+    if (this.HP <= 1 && this instanceof Character) {
       this.statusDead = true;
       this.playDead(this);
+      return true;
+    }
+    if (this.HP <= 1 && (this instanceof Chicken || this instanceof Boss)) {
+      this.statusDead = true;
       return true;
     }
   }
@@ -137,9 +129,4 @@ class MovableObject {
       }
     }, 1000 / 2);
   }
-
-  clearImageCache() {
-    this.imageCache = {};
-  }
-  a;
 }

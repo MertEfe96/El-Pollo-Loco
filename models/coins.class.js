@@ -12,16 +12,16 @@ class Coin extends MovableObject {
   constructor() {
     super().loadImage(this.IMAGES_FLOATING_COIN[0]);
     this.x = 250 + Math.random() * 1500;
-    this.baseY = 100 + Math.random() * 100; // Grundposition
+    this.baseY = 100 + Math.random() * 100;
     this.y = this.baseY;
-    this.floatAngle = 0; // Anfangswinkel
-    this.float(); // Startet die Animation direkt
+    this.floatAngle = 0;
+    this.float();
   }
 
   float() {
     setInterval(() => {
-      this.floatAngle += 0.05; // Je höher, desto schneller (z.B. 0.05–0.1)
-      this.y = this.baseY + Math.sin(this.floatAngle) * 15; // 25px rauf/runter
-    }, 1000 / 60); // 60 FPS
+      this.floatAngle += 0.05;
+      this.y = this.baseY + Math.sin(this.floatAngle) * 15;
+    }, 1000 / 60);
   }
 }

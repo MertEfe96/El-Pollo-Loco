@@ -1,13 +1,22 @@
-class StatusBar {
+class StatusBar extends DrawableObject {
+  HP_BAR_IMAGES = [
+    "./img/7_statusbars/1_statusbar/2_statusbar_health/blue/0.png",
+    "./img/7_statusbars/1_statusbar/2_statusbar_health/blue/20.png",
+    "./img/7_statusbars/1_statusbar/2_statusbar_health/blue/40.png",
+    "./img/7_statusbars/1_statusbar/2_statusbar_health/blue/60.png",
+    "./img/7_statusbars/1_statusbar/2_statusbar_health/blue/80.png",
+    "./img/7_statusbars/1_statusbar/2_statusbar_health/blue/100.png",
+  ];
+
   constructor(character) {
+    super();
     this.character = character;
     this.width = 200;
     this.height = 80;
     this.x = 20;
     this.y = 20;
 
-    this.heartImg = new Image();
-    this.heartImg.src = "./img/7_statusbars/3_icons/icon_health.png";
+    this.loadImages(this.HP_BAR_IMAGES);
 
     this.coinImg = new Image();
     this.coinImg.src = "./img/7_statusbars/3_icons/icon_coin.png";
@@ -17,42 +26,20 @@ class StatusBar {
   }
 
   drawStatus(ctx) {
-    ctx.fillStyle = "rgba(0, 0, 0, 0)";
-    ctx.fillRect(this.x, this.y, 220, 100);
+    let hp = this.character.HP;
+    let hpIndex = hp === 100 ? 5 : hp > 79 ? 4 : hp > 59 ? 3 : hp > 39 ? 2 : hp > 19 ? 1 : 0;
+    let hpImg = this.imageCache[this.HP_BAR_IMAGES[hpIndex]];
 
-    // Herz (HP)
-    ctx.drawImage(this.heartImg, this.x + 10, this.y + 4, 30, 30);
-    this.drawHealthBar(ctx, this.x + 50, this.y + 15);
+    ctx.drawImage(hpImg, this.x + 10, this.y, 150, 50);
 
-    // Coin
     ctx.drawImage(this.coinImg, this.x + 10, this.y + 50, 30, 30);
     ctx.fillStyle = "white";
     ctx.font = "16px Arial";
     ctx.fillText(`${this.character.collectedCoins}`, this.x + 50, this.y + 72);
 
-    // Bottle
-    ctx.drawImage(this.bottleImg, this.x + 120, this.y + 50, 30, 30);
-    this.drawBottleBar(ctx, this.x + 160, this.y + 58);
-  }
-
-  drawHealthBar(ctx, x, y) {
-    // Hintergrund Balken (Grau)
-    ctx.fillStyle = "grey";
-    ctx.fillRect(x, y, 150, 10);
-
-    // Aktueller HP Balken (Grün oder Rot je nach HP)
-    ctx.fillStyle = this.character.HP > 25 ? "green" : "red";
-    ctx.fillRect(x, y, (this.character.HP / 100) * 150, 10);
-  }
-
-  drawBottleBar(ctx, x, y) {
-    const maxBottles = 5;
-    const collected = Math.min(this.character.collectedBottles, maxBottles);
-
-    ctx.fillStyle = "grey";
-    ctx.fillRect(x, y, 50, 10);
-
-    ctx.fillStyle = "blue";
-    ctx.fillRect(x, y, (collected / maxBottles) * 50, 10);
+    ctx.drawImage(this.bottleImg, this.x + 115, this.y + 50, 30, 30);
+    ctx.fillStyle = "white";
+    ctx.font = "16px Arial";
+    ctx.fillText(`${this.character.collectedBottles}`, this.x + 150, this.y + 70);
   }
 }

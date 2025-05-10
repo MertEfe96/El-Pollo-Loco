@@ -72,3 +72,8 @@ function updateKeyStatus() {
     .join(", ");
   document.getElementById("key-status").textContent = pressedKeys || "---";
 }
+
+const slider = document.getElementById("volumeSlider");
+slider.addEventListener("input", function () {
+  soundManager.setVolume(parseFloat(this.value));
+});

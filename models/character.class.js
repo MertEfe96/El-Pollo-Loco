@@ -115,7 +115,7 @@ class Character extends MovableObject {
     }
     if (k.THROW && !this.isAboveGround(180) && !this.statusDead && this.collectedBottles > 0) {
       this.collectedBottles -= 1;
-      console.log("throw");
+      this.throwBottle();
     }
   }
 
@@ -142,5 +142,20 @@ class Character extends MovableObject {
         this.playAnimation(this.IMAGES_JUMPING);
       }
     }, 1000 / 8);
+  }
+
+  bounce() {
+    this.speedY = -15; // Springt leicht nach oben
+  }
+
+  throwBottle() {
+    const bottle = new Bottle();
+    bottle.x = this.x + (this.otherDirection ? -20 : this.width + 10);
+    bottle.y = this.y + this.height / 1.8;
+    bottle.speedX = this.otherDirection ? -15 : 15;
+    bottle.otherDirection = this.otherDirection;
+
+    this.world.level.thrownObjects.push(bottle);
+    bottle.throwBottle();
   }
 }

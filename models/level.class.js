@@ -3,6 +3,7 @@ class Level {
   clouds;
   background;
   collectable;
+  thrownObjects = [];
 
   constructor(enemies, clouds, background, collectable) {
     this.enemies = enemies;
