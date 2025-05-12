@@ -1,3 +1,27 @@
+body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-image: url("./img/10_body/desert.png");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  margin: 0;
+}
+
+@font-face {
+  font-family: "SourGummy";
+  src: url("./fonts/SourGummy/SourGummy-VariableFont_wdth\,wght.ttf");
+}
+
+h1 {
+  color: white;
+  font-size: 40px;
+  font-family: "SourGummy", Arial, Helvetica, sans-serif;
+}
+
 canvas {
   background-color: black;
 }

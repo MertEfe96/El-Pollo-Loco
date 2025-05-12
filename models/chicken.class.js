@@ -15,6 +15,7 @@ class Chicken extends MovableObject {
     this.HP = 20;
     this.speed = 5 + Math.random() * 1;
     this.deathSound = new Audio("./audio/Death/chicken-death.mp3");
+    this.deathSound.volume = 0.5;
 
     this.loadImages(this.IMAGES_WALKING_CHICKEN);
 

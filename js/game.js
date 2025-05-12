@@ -73,7 +73,15 @@ function updateKeyStatus() {
   document.getElementById("key-status").textContent = pressedKeys || "---";
 }
 
-const slider = document.getElementById("volumeSlider");
-slider.addEventListener("input", function () {
-  soundManager.setVolume(parseFloat(this.value));
+// const slider = document.getElementById("volumeSlider");
+
+// slider.addEventListener("input", () => {
+//   const volume = parseFloat(slider.value);
+//   world.setVolume(volume); // 👈 Methode aus deiner World-Klasse
+// });
+
+window.addEventListener("input", () => {
+  const slider = document.getElementById("volumeSlider");
+  const volume = parseFloat(slider.value);
+  world.setVolume(volume);
 });

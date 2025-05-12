@@ -74,6 +74,7 @@ class Character extends MovableObject {
     this.loadImages(this.IMAGES_DEATH);
 
     this.hurtSound = new Audio("./audio/Death/homemadeoof-47509.mp3");
+    this.hurtSound.volume = 0.5;
 
     this.animate();
     this.applyGravity(180);
@@ -116,6 +117,7 @@ class Character extends MovableObject {
     if (k.THROW && !this.isAboveGround(180) && !this.statusDead && this.collectedBottles > 0) {
       this.collectedBottles -= 1;
       this.throwBottle();
+      k.THROW = false;
     }
   }
 
@@ -145,7 +147,7 @@ class Character extends MovableObject {
   }
 
   bounce() {
-    this.speedY = -15; // Springt leicht nach oben
+    this.speedY = -15;
   }
 
   throwBottle() {
@@ -157,5 +159,11 @@ class Character extends MovableObject {
 
     this.world.level.thrownObjects.push(bottle);
     bottle.throwBottle();
+  }
+
+  updateVolume() {
+    if (this.world && this.hurtSound) {
+      this.hurtSound.volume = this.world.getVolume();
+    }
   }
 }

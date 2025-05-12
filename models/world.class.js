@@ -1,6 +1,7 @@
 class World {
   character = new Character();
   level = level1;
+  volume = 0.5;
   canvas;
   ctx;
   keyboard;
@@ -37,18 +38,6 @@ class World {
     }, 100);
   }
 
-  // collisionEnemie() {
-  //   const now = new Date().getTime();
-  //   this.level.enemies.forEach((enemy) => {
-  //     if (this.character.isColliding(enemy) && !this.character.isDead(this.character)) {
-  //       this.character.isTakingDMG(enemy);
-  //     }
-  //     if (now - this.character.lastHitTime > this.character.invincibilityDuration) {
-  //       this.character.isTouchingEnemy = false;
-  //     }
-  //   });
-  // }
-
   collisionEnemie() {
     const now = new Date().getTime();
     this.level.enemies.forEach((enemy) => {
@@ -56,16 +45,8 @@ class World {
         const characterBottom = this.character.y + this.character.height - 20;
         const enemyTop = enemy.y;
         const isAbove = characterBottom <= enemyTop + enemy.height * 0.5;
-
         if (isAbove && this.character.speedY > -10) {
           this.killEnemy(enemy);
-          // enemy.HP -= 20;
-          // this.level.enemies = this.level.enemies.filter((e) => !e.isDead());
-          // if (!enemy.isTouchingEnemy) {
-          //   enemy.isTouchingEnemy = true;
-          //   enemy.playSound(enemy);
-          // }
-          // this.character.bounce();
         } else {
           this.character.isTakingDMG(enemy);
         }
@@ -117,9 +98,7 @@ class World {
 
   draw() {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
     this.ctx.translate(this.camera_x, 0);
-
     this.update();
     this.addObjectsToMap(this.level.background);
     this.addObjectsToMap(this.level.clouds);
@@ -127,11 +106,8 @@ class World {
     this.addMapObject(this.character);
     this.addObjectsToMap(this.level.enemies);
     this.addObjectsToMap(this.level.thrownObjects);
-
     this.ctx.translate(-this.camera_x, 0);
-
     this.statusBar.drawStatus(this.ctx);
-
     let self = this;
     requestAnimationFrame(function () {
       self.draw();
@@ -150,7 +126,6 @@ class World {
     } else {
       this.ctx.drawImage(mo.img, mo.x, mo.y, mo.width, mo.height);
     }
-
     mo.drawFrame(this.ctx);
   }
 
@@ -160,5 +135,21 @@ class World {
     this.ctx.scale(-1, 1);
     this.ctx.drawImage(mo.img, 0, mo.y, mo.width, mo.height);
     this.ctx.restore();
+  }
+
+  setVolume(value) {
+    this.volume = Math.max(0, Math.min(1, value));
+
+    if (this.character) {
+      this.character.updateVolume(); // 👈 Charakter-Sound aktualisieren
+    }
+
+    this.level.enemies.forEach((e) => {
+      if (e.deathSound) e.deathSound.volume = this.volume;
+    });
+  }
+
+  getVolume() {
+    return this.volume;
   }
 }
