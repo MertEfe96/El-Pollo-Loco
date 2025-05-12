@@ -141,7 +141,7 @@ class World {
     this.volume = Math.max(0, Math.min(1, value));
 
     if (this.character) {
-      this.character.updateVolume(); // 👈 Charakter-Sound aktualisieren
+      this.character.updateVolume();
     }
 
     this.level.enemies.forEach((e) => {
