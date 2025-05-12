@@ -85,3 +85,17 @@ window.addEventListener("input", () => {
   const volume = parseFloat(slider.value);
   world.setVolume(volume);
 });
+
+function showInput(id) {
+  input = document.getElementById(id);
+  input.style.display = "block";
+}
+
+function hideInput(id) {
+  input = document.getElementById(id);
+  input.style.display = "none";
+}
+
+function fullscreen() {
+  canvas.requestFullscreen();
+}

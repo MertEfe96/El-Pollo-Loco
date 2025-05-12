@@ -38,3 +38,32 @@ canvas {
   border-radius: 8px;
   z-index: 1000;
 }
+
+.volumeControl {
+  display: flex;
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  width: 120px;
+  z-index: 10;
+  opacity: 0.7;
+}
+
+.volumeIcon {
+  width: 40px;
+  height: 40px;
+}
+
+#volumeSlider {
+  display: none;
+}
+
+.fullscreenIcon {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  width: 40px;
+  height: 40px;
+  z-index: 9999;
+  opacity: 0.7;
+}
