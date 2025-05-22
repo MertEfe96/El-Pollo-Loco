@@ -73,18 +73,28 @@ function updateKeyStatus() {
   document.getElementById("key-status").textContent = pressedKeys || "---";
 }
 
-// const slider = document.getElementById("volumeSlider");
-
-// slider.addEventListener("input", () => {
-//   const volume = parseFloat(slider.value);
-//   world.setVolume(volume); // 👈 Methode aus deiner World-Klasse
-// });
-
 window.addEventListener("input", () => {
   const slider = document.getElementById("volumeSlider");
   const volume = parseFloat(slider.value);
   world.setVolume(volume);
+  checkVolumeLevel(slider, volume);
 });
+
+function muteGame() {
+  const slider = document.getElementById("volumeSlider");
+  slider.value = 0;
+  world.setVolume(0);
+  checkVolumeLevel(slider, 0);
+}
+
+function checkVolumeLevel(slider, volume) {
+  const icon = document.getElementById("volumeIcon");
+  if (volume == 0) {
+    icon.src = "./img/11_Icons/Volume_Mute_Icon.png";
+  } else {
+    icon.src = "./img/11_Icons/Volume_Icon.png";
+  }
+}
 
 function showInput(id) {
   input = document.getElementById(id);
