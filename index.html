@@ -19,24 +19,29 @@
     <script src="./models/character.class.js"></script>
     <script src="./js/game.js"></script> 
     <script src="./levels/level1.js"></script>
+    <link rel="apple-touch-icon" sizes="180x180" href="./img/favicon/android-chrome-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="./img/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="./img/favicon/favicon-16x16.png">
+    <link rel="manifest" href="./img/favicon/site.webmanifest">
     <title>Game</title>
   </head>
   <body onload="init()">
     <h1>EL-POLLO-LOCO</h1>
 
-    <canvas id="canvas" width="750px" height="480px"> </canvas>
-
+    <div class="canvasDiv">
+      <canvas id="canvas" width="750px" height="480px"> </canvas>
+      <div class="canvasMenu">
+        <div class="volumeControl" onmouseover="showInput('volumeSlider')" onmouseleave="hideInput('volumeSlider')">
+        <img src="./img/11_Icons/Volume_Icon.png" class="volumeIcon" id="volumeIcon"alt="" onclick="muteGame()">
+        <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="0.5">   
+      </div>
+      <img src="./img/11_Icons/Fullscreen.png" class="fullscreenIcon" onclick="fullscreen()">
+      </div>
+      
+    </div>
     <div
       id="debug-overlay"
       <strong>Tasten:</strong> <span id="key-status">---</span>
     </div>
-
-    <div class="volumeControl" onmouseover="showInput('volumeSlider')" onmouseleave="hideInput('volumeSlider')">
-      <img src="./img/11_Icons/Volume_Icon.png" class="volumeIcon" id="volumeIcon"alt="" onclick="muteGame()">
-    <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="0.5">
-    </div>
-
-    <img src="./img/11_Icons/Fullscreen.png" class="fullscreenIcon" onclick="fullscreen()">
-
   </body>
 </html>

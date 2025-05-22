@@ -1,6 +1,7 @@
 let arc1 = generateCoinsInArc(500, 250, 100, 5);
 let arc2 = generateCoinsInArc(1200, 200, 80, 5);
 let arc3 = generateCoinsInArc(1800, 220, 120, 5);
+let chicken = generateChickens(5, 100);
 let bottleArr = [new Bottle(), new Bottle(), new Bottle(), new Bottle(), new Bottle()];
 const allCollectables = arc1.concat(arc2, arc3, bottleArr);
 const start = -749;
@@ -30,18 +31,19 @@ const buildBg = () => {
 };
 
 const level1 = new Level(
-  [
-    new Chicken(),
-    new Chicken(),
-    new Chicken(),
-    new Chicken(),
-    new Chicken(),
-    new Chicken(),
-    new Chicken(),
-    new Chicken(),
-    new Chicken(),
-    new Boss(),
-  ],
+  // [
+  //   new Chicken(),
+  //   new Chicken(),
+  //   new Chicken(),
+  //   new Chicken(),
+  //   new Chicken(),
+  //   new Chicken(),
+  //   new Chicken(),
+  //   new Chicken(),
+  //   new Chicken(),
+  //   new Boss(),
+  // ]
+  chicken,
   [new Cloud(), new Cloud(), new Cloud(), new Cloud()],
   buildBg(),
   allCollectables

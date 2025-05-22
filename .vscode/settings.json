@@ -1,3 +1,6 @@
 {
-    "explorer.copyRelativePathSeparator": "/"
+  "explorer.copyRelativePathSeparator": "/",
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
+  "formatSelectionAsHtml.formatter": "prettier"
 }

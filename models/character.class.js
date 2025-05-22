@@ -154,11 +154,10 @@ class Character extends MovableObject {
     const bottle = new Bottle();
     bottle.x = this.x + (this.otherDirection ? -20 : this.width + 10);
     bottle.y = this.y + this.height / 1.8;
-    bottle.speedX = this.otherDirection ? -15 : 15;
+    bottle.speedX = this.otherDirection ? -5 : 5;
     bottle.otherDirection = this.otherDirection;
 
     this.world.level.thrownObjects.push(bottle);
-    bottle.throwBottle();
   }
 
   updateVolume() {

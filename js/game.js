@@ -48,6 +48,27 @@ function generateCoins(amount, minHorizontalDistance) {
   return coins;
 }
 
+function generateChickens(amount, minHorizontalDistance) {
+  const chickens = [];
+  const boss = new Boss();
+  while (chickens.length < amount) {
+    const newChicken = new Chicken();
+    let tooClose = false;
+    for (let existing of chickens) {
+      const dx = Math.abs(existing.x - existing.width / 2 - (newChicken.x - newChicken.width / 2));
+      if (dx < minHorizontalDistance) {
+        tooClose = true;
+        break;
+      }
+    }
+    if (!tooClose) {
+      chickens.push(newChicken);
+    }
+  }
+  chickens.push(boss);
+  return chickens;
+}
+
 function generateCoinsInArc(centerX, centerY, radius, count) {
   const coins = [];
   const startAngle = 0;
