@@ -55,7 +55,12 @@ class MovableObject extends DrawableObject {
   }
 
   drawFrame(ctx) {
-    if (this instanceof Character || this instanceof Chicken || this instanceof Coin || this instanceof Bottle) {
+    if (
+      this instanceof Character ||
+      this instanceof Chicken ||
+      this instanceof Coin ||
+      this instanceof Bottle
+    ) {
       ctx.beginPath();
       ctx.lineWitdh = "5";
       ctx.strokeStyle = "blue";
@@ -118,7 +123,6 @@ class MovableObject extends DrawableObject {
   }
 
   playDead(char) {
-    console.log("dead");
     char.currentImage = 0;
     let i = 0;
     const intervalId = setInterval(() => {

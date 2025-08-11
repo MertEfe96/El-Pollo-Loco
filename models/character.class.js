@@ -86,7 +86,7 @@ class Character extends MovableObject {
   }
 
   handleMovement() {
-    const {RIGHT, LEFT} = this.world.keyboard;
+    const { RIGHT, LEFT } = this.world.keyboard;
     if (RIGHT && this.x < 2800 && !this.statusDead) {
       this.x += this.speed;
       this.otherDirection = false;
@@ -111,10 +111,14 @@ class Character extends MovableObject {
     }
     if (k.SPACE && !this.isAboveGround(180) && !this.statusDead) {
       this.speedY = -15;
-      console.log(this.speedY);
       this.jumpAnimation();
     }
-    if (k.THROW && !this.isAboveGround(180) && !this.statusDead && this.collectedBottles > 0) {
+    if (
+      k.THROW &&
+      !this.isAboveGround(180) &&
+      !this.statusDead &&
+      this.collectedBottles > 0
+    ) {
       this.collectedBottles -= 1;
       this.throwBottle();
       k.THROW = false;

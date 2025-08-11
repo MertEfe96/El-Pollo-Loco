@@ -32,7 +32,5 @@ class Bottle extends MovableObject {
     this.animateRotation(this.IMAGES_BOTTLE_GROUND);
   }
 
-  throwBottle() {
-    console.log("throw");
-  }
+  throwBottle() {}
 }

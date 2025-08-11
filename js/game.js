@@ -6,12 +6,16 @@ const kb = {
   key: {},
   code: {},
 };
+const controls = [
+  { id: "btn-left", key: "KeyA" },
+  { id: "btn-right", key: "KeyD" },
+  { id: "btn-jump", key: "Space" },
+  { id: "btn-throw", key: "KeyE" },
+];
 
 function init() {
   canvas = document.getElementById("canvas");
   world = new World(canvas, keyboard);
-
-  console.log("My Character is", world.character);
 }
 
 window.addEventListener("keydown", (event) => {
@@ -34,7 +38,9 @@ function generateCoins(amount, minHorizontalDistance) {
     const newCoin = new Coin();
     let tooClose = false;
     for (let existing of coins) {
-      const dx = Math.abs(existing.x - existing.width / 2 - (newCoin.x - newCoin.width / 2));
+      const dx = Math.abs(
+        existing.x - existing.width / 2 - (newCoin.x - newCoin.width / 2)
+      );
       if (dx < minHorizontalDistance) {
         tooClose = true;
         break;
@@ -55,7 +61,9 @@ function generateChickens(amount, minHorizontalDistance) {
     const newChicken = new Chicken();
     let tooClose = false;
     for (let existing of chickens) {
-      const dx = Math.abs(existing.x - existing.width / 2 - (newChicken.x - newChicken.width / 2));
+      const dx = Math.abs(
+        existing.x - existing.width / 2 - (newChicken.x - newChicken.width / 2)
+      );
       if (dx < minHorizontalDistance) {
         tooClose = true;
         break;
@@ -130,3 +138,26 @@ function hideInput(id) {
 function fullscreen() {
   canvas.requestFullscreen();
 }
+
+// ...Mobile Controls...
+// This function sets up mobile controls for the game
+// It binds touch events to buttons for left, right, jump, and throw actions
+
+function setMobileControls() {
+  controls.forEach(({ id, key }) => {
+    const btn = document.getElementById(id);
+    btn.addEventListener("touchstart", (e) => {
+      e.preventDefault();
+      keyboard.action(key);
+      updateKeyStatus();
+    });
+    btn.addEventListener("touchend", (e) => {
+      e.preventDefault();
+      keyboard.release(key);
+      updateKeyStatus();
+    });
+  });
+}
+
+// Call this after DOM is loaded
+window.addEventListener("DOMContentLoaded", setMobileControls);

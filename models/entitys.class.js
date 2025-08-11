@@ -3,7 +3,5 @@ class Entity {
   y;
   img;
 
-  moveRight() {
-    console.log("Moving right");
-  }
+  moveRight() {}
 }

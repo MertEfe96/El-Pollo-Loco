@@ -22,8 +22,13 @@ h1 {
   font-family: "SourGummy", Arial, Helvetica, sans-serif;
 }
 
+.canvasDiv {
+  height: 480px;
+}
+
 canvas {
   background-color: black;
+  display: block;
 }
 
 #debug-overlay {
@@ -57,6 +62,9 @@ canvas {
   height: 40px;
   margin-left: 8px;
 }
+.volumeIcon:hover {
+  cursor: pointer;
+}
 
 #volumeSlider {
   display: none;
@@ -67,4 +75,149 @@ canvas {
   height: 40px;
   margin-right: 7px;
   opacity: 0.7;
+}
+
+.fullscreenIcon:hover {
+  cursor: pointer;
+}
+
+.game-controls {
+  margin-top: 30px;
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  padding: 18px 28px;
+  border-radius: 12px;
+  font-family: "SourGummy", Arial, Helvetica, sans-serif;
+  text-align: center;
+  width: fit-content;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+.game-controls h2 {
+  margin: 0 0 10px 0;
+  font-size: 28px;
+  letter-spacing: 2px;
+}
+
+.game-controls ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.game-controls li {
+  margin: 8px 0;
+  font-size: 20px;
+}
+
+.key {
+  display: inline-block;
+  background: #222;
+  color: #ffd700;
+  border-radius: 6px;
+  padding: 3px 12px;
+  margin: 0 2px;
+  font-size: 18px;
+  font-family: "SourGummy", Arial, Helvetica, sans-serif;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  border: 1px solid #444;
+}
+
+.mobile-controls {
+  display: none;
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+
+.mobileDiv {
+  display: flex;
+  justify-content: space-between;
+  width: 85%;
+}
+
+.jc-sb {
+  width: 95% !important;
+}
+
+.mobile-btn {
+  font-family: "SourGummy", Arial, Helvetica, sans-serif;
+  font-size: 2rem;
+  background: rgba(34, 34, 34, 0.45);
+  color: #ffd700;
+  border: 2px solid #444;
+  border-radius: 12px;
+  padding: 8px 8px;
+  padding-block: 0;
+  padding-inline: 0;
+  margin: 0 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  outline: none;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.mobile-btn:active {
+  background: #222;
+}
+
+.bottleMobileButtonImg {
+  width: 40px;
+  height: 40px;
+}
+
+@media only screen and (max-width: 900px) {
+  .mobile-controls {
+    display: flex;
+  }
+}
+
+@media only screen and (max-width: 760px) {
+  canvas {
+    width: 100%;
+  }
+  .fullscreenIcon {
+    display: none;
+  }
+}
+
+@media (max-height: 600px) {
+  canvas {
+    height: 100vh;
+    width: 100%;
+  }
+  .canvasDiv {
+    height: 100vh;
+    width: 100%;
+  }
+  .canvasMenu {
+    bottom: auto;
+    position: absolute;
+    top: 30px;
+    right: 25px;
+    justify-content: end;
+  }
+  .volumeControl {
+    flex-direction: row-reverse;
+  }
+  h1 {
+    display: none;
+  }
+  #debug-overlay {
+    display: none;
+  }
+  #controls {
+    display: none;
+  }
+  .mobile-controls {
+    display: flex;
+  }
+  .fullscreenIcon {
+    display: none;
+  }
 }

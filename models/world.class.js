@@ -41,8 +41,11 @@ class World {
   collisionEnemie() {
     const now = new Date().getTime();
     this.level.enemies.forEach((enemy) => {
-      if (this.character.isColliding(enemy) && !this.character.isDead(this.character)) {
-        const characterBottom = this.character.y + this.character.height - 20;
+      if (
+        this.character.isColliding(enemy) &&
+        !this.character.isDead(this.character)
+      ) {
+        const characterBottom = this.character.y + this.character.height - 40;
         const enemyTop = enemy.y;
         const isAbove = characterBottom <= enemyTop + enemy.height * 0.5;
         if (isAbove && this.character.speedY > -10) {
@@ -51,7 +54,10 @@ class World {
           this.character.isTakingDMG(enemy);
         }
       }
-      if (now - this.character.lastHitTime > this.character.invincibilityDuration) {
+      if (
+        now - this.character.lastHitTime >
+        this.character.invincibilityDuration
+      ) {
         this.character.isTouchingEnemy = false;
       }
     });
@@ -67,21 +73,28 @@ class World {
       });
     });
 
-    this.level.thrownObjects = this.level.thrownObjects.filter((b) => !b.markForRemoval);
+    this.level.thrownObjects = this.level.thrownObjects.filter(
+      (b) => !b.markForRemoval
+    );
 
     this.level.enemies = this.level.enemies.filter((e) => !e.isDead());
   }
 
   collisionCollectable() {
     this.level.collectable.forEach((collectable) => {
-      if (this.character.isColliding(collectable) && !this.character.isDead(this.character)) {
+      if (
+        this.character.isColliding(collectable) &&
+        !this.character.isDead(this.character)
+      ) {
         if (collectable instanceof Coin) {
           this.character.collectedCoins += 1;
         }
         if (collectable instanceof Bottle) {
           this.character.collectedBottles += 1;
         }
-        this.level.collectable = this.level.collectable.filter((obj) => obj !== collectable);
+        this.level.collectable = this.level.collectable.filter(
+          (obj) => obj !== collectable
+        );
       }
     });
   }
@@ -126,7 +139,7 @@ class World {
     } else {
       this.ctx.drawImage(mo.img, mo.x, mo.y, mo.width, mo.height);
     }
-    mo.drawFrame(this.ctx);
+    //mo.drawFrame(this.ctx);
   }
 
   flipImage(mo) {
