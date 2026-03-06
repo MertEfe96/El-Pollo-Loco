@@ -24,6 +24,7 @@ h1 {
 
 .canvasDiv {
   height: 480px;
+  position: relative;
 }
 
 canvas {
@@ -175,6 +176,9 @@ canvas {
   .mobile-controls {
     display: flex;
   }
+  #controls {
+    display: none;
+  }
 }
 
 @media only screen and (max-width: 760px) {
@@ -220,4 +224,34 @@ canvas {
   .fullscreenIcon {
     display: none;
   }
+}
+
+.introOutro {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url("./img/9_intro_outro_screens/start/startscreen_2.png");
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+}
+
+#startButton {
+  background-color: rgba(255, 255, 255, 0.8);
+  border: 2px solid #000;
+  color: #000;
+  font-size: 24px;
+  font-family: "SourGummy", Arial, Helvetica, sans-serif;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 10px;
+}
+
+#startButton:hover {
+  background-color: rgba(255, 255, 255, 1);
 }

@@ -6,12 +6,23 @@ class World {
   ctx;
   keyboard;
   camera_x = 0;
+  gameOverTriggered = false;
+  boss;
+  winImage;
+  winTriggered = false;
 
   constructor(canvas, keyboard) {
     this.ctx = canvas.getContext("2d");
     this.canvas = canvas;
     this.keyboard = keyboard;
     this.statusBar = new StatusBar(this.character);
+    this.gameOverImage = new Image();
+    this.gameOverImage.src = "./img/9_intro_outro_screens/game_over/oh no you lost!.png";
+    this.boss = this.level.enemies.find((e) => e instanceof Boss);
+    this.bossStatusBar = new BossStatusBar(this.boss);
+    this.winImage = new Image();
+    this.winImage.src = "./img/9_intro_outro_screens/game_over/game over!.png";
+    this.winTriggered = false;
     this.draw();
     this.setWorld();
     this.checkCollisons();
@@ -38,13 +49,14 @@ class World {
     }, 100);
   }
 
+  isBossVisible() {
+    return this.boss.x + this.boss.width > -this.camera_x && this.boss.x < -this.camera_x + this.canvas.width;
+  }
+
   collisionEnemie() {
     const now = new Date().getTime();
     this.level.enemies.forEach((enemy) => {
-      if (
-        this.character.isColliding(enemy) &&
-        !this.character.isDead(this.character)
-      ) {
+      if (this.character.isColliding(enemy) && !this.character.isDead(this.character)) {
         const characterBottom = this.character.y + this.character.height - 40;
         const enemyTop = enemy.y;
         const isAbove = characterBottom <= enemyTop + enemy.height * 0.5;
@@ -54,10 +66,7 @@ class World {
           this.character.isTakingDMG(enemy);
         }
       }
-      if (
-        now - this.character.lastHitTime >
-        this.character.invincibilityDuration
-      ) {
+      if (now - this.character.lastHitTime > this.character.invincibilityDuration) {
         this.character.isTouchingEnemy = false;
       }
     });
@@ -73,28 +82,21 @@ class World {
       });
     });
 
-    this.level.thrownObjects = this.level.thrownObjects.filter(
-      (b) => !b.markForRemoval
-    );
+    this.level.thrownObjects = this.level.thrownObjects.filter((b) => !b.markForRemoval);
 
     this.level.enemies = this.level.enemies.filter((e) => !e.isDead());
   }
 
   collisionCollectable() {
     this.level.collectable.forEach((collectable) => {
-      if (
-        this.character.isColliding(collectable) &&
-        !this.character.isDead(this.character)
-      ) {
+      if (this.character.isColliding(collectable) && !this.character.isDead(this.character)) {
         if (collectable instanceof Coin) {
           this.character.collectedCoins += 1;
         }
         if (collectable instanceof Bottle) {
           this.character.collectedBottles += 1;
         }
-        this.level.collectable = this.level.collectable.filter(
-          (obj) => obj !== collectable
-        );
+        this.level.collectable = this.level.collectable.filter((obj) => obj !== collectable);
       }
     });
   }
@@ -110,6 +112,36 @@ class World {
   }
 
   draw() {
+    this.checkWinCondition();
+    this.checkGameOver();
+    if (this.gameOverTriggered) return;
+    this.drawScene();
+    this.drawStatusBars();
+    this.drawOverlays();
+    requestAnimationFrame(() => this.draw());
+  }
+
+  checkWinCondition() {
+    if (this.boss.statusDead && !this.winTriggered) {
+      this.winTriggered = true;
+      setTimeout(() => {
+        document.querySelector(".introOutro").style.display = "flex";
+      }, 5000);
+    }
+  }
+
+  checkGameOver() {
+    if (this.character.statusDead && this.character.deathAnimationDone) {
+      if (!this.gameOverTriggered) {
+        this.gameOverTriggered = true;
+        setTimeout(() => {
+          document.querySelector(".introOutro").style.display = "flex";
+        }, 5000);
+      }
+    }
+  }
+
+  drawScene() {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     this.ctx.translate(this.camera_x, 0);
     this.update();
@@ -120,11 +152,22 @@ class World {
     this.addObjectsToMap(this.level.enemies);
     this.addObjectsToMap(this.level.thrownObjects);
     this.ctx.translate(-this.camera_x, 0);
+  }
+
+  drawStatusBars() {
     this.statusBar.drawStatus(this.ctx);
-    let self = this;
-    requestAnimationFrame(function () {
-      self.draw();
-    });
+    if (this.isBossVisible()) {
+      this.bossStatusBar.drawStatus(this.ctx);
+    }
+  }
+
+  drawOverlays() {
+    if (this.character.statusDead && !this.character.deathAnimationDone) {
+      this.ctx.drawImage(this.gameOverImage, 0, 0, this.canvas.width, this.canvas.height);
+    }
+    if (this.boss.statusDead) {
+      this.ctx.drawImage(this.winImage, 0, 0, this.canvas.width, this.canvas.height);
+    }
   }
 
   addObjectsToMap(objects) {

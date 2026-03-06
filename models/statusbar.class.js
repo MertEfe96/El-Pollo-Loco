@@ -43,3 +43,37 @@ class StatusBar extends DrawableObject {
     ctx.fillText(`${this.character.collectedBottles}`, this.x + 150, this.y + 70);
   }
 }
+
+class BossStatusBar extends DrawableObject {
+  BOSS_BAR_IMAGES = [
+    "./img/7_statusbars/2_statusbar_endboss/blue.png",
+    "./img/7_statusbars/2_statusbar_endboss/green.png",
+    "./img/7_statusbars/2_statusbar_endboss/orange.png",
+  ];
+
+  constructor(boss) {
+    super();
+    this.boss = boss;
+    this.width = 200;
+    this.height = 80;
+    this.x = 540;
+    this.y = 10;
+
+    this.loadImages(this.BOSS_BAR_IMAGES);
+  }
+
+  drawStatus(ctx) {
+    let hp = this.boss.HP;
+    let imgIndex;
+    if (this.boss.statusDead) {
+      imgIndex = 2; // orange
+    } else if (hp < 40) {
+      imgIndex = 1; // green
+    } else {
+      imgIndex = 0; // blue
+    }
+    let img = this.imageCache[this.BOSS_BAR_IMAGES[imgIndex]];
+
+    ctx.drawImage(img, this.x, this.y, this.width, this.height);
+  }
+}

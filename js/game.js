@@ -7,15 +7,20 @@ const kb = {
   code: {},
 };
 const controls = [
-  { id: "btn-left", key: "KeyA" },
-  { id: "btn-right", key: "KeyD" },
-  { id: "btn-jump", key: "Space" },
-  { id: "btn-throw", key: "KeyE" },
+  {id: "btn-left", key: "KeyA"},
+  {id: "btn-right", key: "KeyD"},
+  {id: "btn-jump", key: "Space"},
+  {id: "btn-throw", key: "KeyE"},
 ];
 
 function init() {
   canvas = document.getElementById("canvas");
+}
+
+function startGame() {
+  initLevel();
   world = new World(canvas, keyboard);
+  document.querySelector(".introOutro").style.display = "none";
 }
 
 window.addEventListener("keydown", (event) => {
@@ -38,9 +43,7 @@ function generateCoins(amount, minHorizontalDistance) {
     const newCoin = new Coin();
     let tooClose = false;
     for (let existing of coins) {
-      const dx = Math.abs(
-        existing.x - existing.width / 2 - (newCoin.x - newCoin.width / 2)
-      );
+      const dx = Math.abs(existing.x - existing.width / 2 - (newCoin.x - newCoin.width / 2));
       if (dx < minHorizontalDistance) {
         tooClose = true;
         break;
@@ -61,9 +64,7 @@ function generateChickens(amount, minHorizontalDistance) {
     const newChicken = new Chicken();
     let tooClose = false;
     for (let existing of chickens) {
-      const dx = Math.abs(
-        existing.x - existing.width / 2 - (newChicken.x - newChicken.width / 2)
-      );
+      const dx = Math.abs(existing.x - existing.width / 2 - (newChicken.x - newChicken.width / 2));
       if (dx < minHorizontalDistance) {
         tooClose = true;
         break;
@@ -105,14 +106,18 @@ function updateKeyStatus() {
 window.addEventListener("input", () => {
   const slider = document.getElementById("volumeSlider");
   const volume = parseFloat(slider.value);
-  world.setVolume(volume);
+  if (world) {
+    world.setVolume(volume);
+  }
   checkVolumeLevel(slider, volume);
 });
 
 function muteGame() {
   const slider = document.getElementById("volumeSlider");
   slider.value = 0;
-  world.setVolume(0);
+  if (world) {
+    world.setVolume(0);
+  }
   checkVolumeLevel(slider, 0);
 }
 
@@ -144,7 +149,7 @@ function fullscreen() {
 // It binds touch events to buttons for left, right, jump, and throw actions
 
 function setMobileControls() {
-  controls.forEach(({ id, key }) => {
+  controls.forEach(({id, key}) => {
     const btn = document.getElementById(id);
     btn.addEventListener("touchstart", (e) => {
       e.preventDefault();
@@ -159,5 +164,4 @@ function setMobileControls() {
   });
 }
 
-// Call this after DOM is loaded
 window.addEventListener("DOMContentLoaded", setMobileControls);

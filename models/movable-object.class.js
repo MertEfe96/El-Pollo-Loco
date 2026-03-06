@@ -130,6 +130,7 @@ class MovableObject extends DrawableObject {
       i++;
       if (i === 7) {
         clearInterval(intervalId);
+        char.deathAnimationDone = true;
       }
     }, 1000 / 2);
   }

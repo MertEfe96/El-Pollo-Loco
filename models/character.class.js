@@ -12,6 +12,7 @@ class Character extends MovableObject {
   lastHitTime = 0;
   invincibilityDuration = 1000;
   isTouchingEnemy = false;
+  deathAnimationDone = false;
   offset = {
     top: 110,
     bottom: 30,
