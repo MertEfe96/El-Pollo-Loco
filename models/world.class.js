@@ -28,20 +28,15 @@ class World {
     this.setWorld();
     this.checkCollisons();
 
-    // Initialize background music (looping) and set initial volume
     try {
       this.backgroundMusic = new Audio("audio/BGM/juliush-fiesta-en-guadalajara-mariachi-de-la-calle-503318.mp3");
       this.backgroundMusic.loop = true;
       this.backgroundMusic.volume = this.volume;
       const playPromise = this.backgroundMusic.play();
       if (playPromise !== undefined) {
-        playPromise.catch(() => {
-          // Autoplay might be blocked by browser; will start after user interaction
-        });
+        playPromise.catch(() => {});
       }
-    } catch (e) {
-      // ignore audio initialization errors in environments without audio
-    }
+    } catch (e) {}
   }
 
   setWorld() {
@@ -91,9 +86,14 @@ class World {
   checkBottleHitsEnemy() {
     this.level.thrownObjects.forEach((bottle) => {
       this.level.enemies.forEach((enemy) => {
-        if (bottle.isColliding(enemy)) {
+        if (bottle.isColliding(enemy) && !bottle.hasHit) {
+          bottle.hasHit = true;
           enemy.HP -= 20;
-          bottle.markForRemoval = true;
+          if (bottle && typeof bottle.splash === "function") {
+            bottle.splash();
+          } else {
+            bottle.markForRemoval = true;
+          }
         }
       });
     });
@@ -193,6 +193,10 @@ class World {
   }
 
   addMapObject(mo) {
+    if (!mo || !mo.img || !(mo.img instanceof HTMLImageElement)) {
+      return;
+    }
+
     if (mo.otherDirection) {
       this.flipImage(mo);
     } else {
@@ -205,7 +209,9 @@ class World {
     this.ctx.save();
     this.ctx.translate(mo.x + mo.width, 0);
     this.ctx.scale(-1, 1);
-    this.ctx.drawImage(mo.img, 0, mo.y, mo.width, mo.height);
+    if (mo && mo.img && mo.img instanceof HTMLImageElement) {
+      this.ctx.drawImage(mo.img, 0, mo.y, mo.width, mo.height);
+    }
     this.ctx.restore();
   }
 

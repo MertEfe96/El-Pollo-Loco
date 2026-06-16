@@ -15,9 +15,9 @@ class Character extends MovableObject {
   deathAnimationDone = false;
   offset = {
     top: 110,
-    bottom: 30,
+    bottom: 40,
     left: 30,
-    right: 50,
+    right: 45,
   };
   IMAGES_IDLE = [
     "./img/2_character_pepe/1_idle/idle/I-1.png",
@@ -87,7 +87,7 @@ class Character extends MovableObject {
   }
 
   handleMovement() {
-    const { RIGHT, LEFT } = this.world.keyboard;
+    const {RIGHT, LEFT} = this.world.keyboard;
     if (RIGHT && this.x < 2800 && !this.statusDead) {
       this.x += this.speed;
       this.otherDirection = false;
@@ -114,12 +114,7 @@ class Character extends MovableObject {
       this.speedY = -15;
       this.jumpAnimation();
     }
-    if (
-      k.THROW &&
-      !this.isAboveGround(180) &&
-      !this.statusDead &&
-      this.collectedBottles > 0
-    ) {
+    if (k.THROW && !this.isAboveGround(180) && !this.statusDead && this.collectedBottles > 0) {
       this.collectedBottles -= 1;
       this.throwBottle();
       k.THROW = false;
@@ -157,11 +152,13 @@ class Character extends MovableObject {
 
   throwBottle() {
     const bottle = new Bottle();
-    bottle.x = this.x + (this.otherDirection ? -20 : this.width + 10);
+    bottle.x = this.x + (this.otherDirection ? -30 : this.width + 5);
     bottle.y = this.y + this.height / 1.8;
-    bottle.speedX = this.otherDirection ? -5 : 5;
+    bottle.speedX = this.otherDirection ? -2 : 2;
+    bottle.speedY = -15;
     bottle.otherDirection = this.otherDirection;
-
+    bottle.applyGravity(330);
+    bottle.animateRotation(bottle.IMAGES_BOTTLE_ROTATION);
     this.world.level.thrownObjects.push(bottle);
   }
 

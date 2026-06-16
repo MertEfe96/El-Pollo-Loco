@@ -172,6 +172,13 @@ canvas {
   height: 40px;
 }
 
+footer {
+  margin-top: 20px;
+  text-align: center;
+  color: white;
+  font-family: "SourGummy", Arial, Helvetica, sans-serif;
+}
+
 @media only screen and (max-width: 900px) {
   .mobile-controls {
     display: flex;

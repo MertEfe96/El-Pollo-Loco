@@ -7,10 +7,10 @@ const kb = {
   code: {},
 };
 const controls = [
-  { id: "btn-left", key: "KeyA" },
-  { id: "btn-right", key: "KeyD" },
-  { id: "btn-jump", key: "Space" },
-  { id: "btn-throw", key: "KeyE" },
+  {id: "btn-left", key: "KeyA"},
+  {id: "btn-right", key: "KeyD"},
+  {id: "btn-jump", key: "Space"},
+  {id: "btn-throw", key: "KeyE"},
 ];
 
 function init() {
@@ -28,14 +28,14 @@ window.addEventListener("keydown", (event) => {
   const key = event.code;
   kb.pressed[key] = true;
   keyboard.action(key);
-  updateKeyStatus();
+  // updateKeyStatus();
 });
 
 window.addEventListener("keyup", (event) => {
   const key = event.code;
   kb.pressed[key] = false;
   keyboard.release(key);
-  updateKeyStatus();
+  // updateKeyStatus();
 });
 
 function generateCoins(amount, minHorizontalDistance) {
@@ -44,9 +44,7 @@ function generateCoins(amount, minHorizontalDistance) {
     const newCoin = new Coin();
     let tooClose = false;
     for (let existing of coins) {
-      const dx = Math.abs(
-        existing.x - existing.width / 2 - (newCoin.x - newCoin.width / 2),
-      );
+      const dx = Math.abs(existing.x - existing.width / 2 - (newCoin.x - newCoin.width / 2));
       if (dx < minHorizontalDistance) {
         tooClose = true;
         break;
@@ -56,7 +54,6 @@ function generateCoins(amount, minHorizontalDistance) {
       coins.push(newCoin);
     }
   }
-
   return coins;
 }
 
@@ -67,9 +64,7 @@ function generateChickens(amount, minHorizontalDistance) {
     const newChicken = new Chicken();
     let tooClose = false;
     for (let existing of chickens) {
-      const dx = Math.abs(
-        existing.x - existing.width / 2 - (newChicken.x - newChicken.width / 2),
-      );
+      const dx = Math.abs(existing.x - existing.width / 2 - (newChicken.x - newChicken.width / 2));
       if (dx < minHorizontalDistance) {
         tooClose = true;
         break;
@@ -101,12 +96,12 @@ function generateCoinsInArc(centerX, centerY, radius, count) {
   return coins;
 }
 
-function updateKeyStatus() {
-  const pressedKeys = Object.keys(kb.pressed)
-    .filter((key) => kb.pressed[key])
-    .join(", ");
-  document.getElementById("key-status").textContent = pressedKeys || "---";
-}
+// function updateKeyStatus() {
+//   const pressedKeys = Object.keys(kb.pressed)
+//     .filter((key) => kb.pressed[key])
+//     .join(", ");
+//   document.getElementById("key-status").textContent = pressedKeys || "---";
+// }
 
 window.addEventListener("input", () => {
   const slider = document.getElementById("volumeSlider");
@@ -156,7 +151,7 @@ function fullscreen() {
 // It binds touch events to buttons for left, right, jump, and throw actions
 
 function setMobileControls() {
-  controls.forEach(({ id, key }) => {
+  controls.forEach(({id, key}) => {
     const btn = document.getElementById(id);
     btn.addEventListener("touchstart", (e) => {
       e.preventDefault();
