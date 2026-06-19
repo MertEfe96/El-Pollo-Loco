@@ -88,15 +88,15 @@ class Character extends MovableObject {
 
   handleMovement() {
     const {RIGHT, LEFT} = this.world.keyboard;
-    if (RIGHT && this.x < 2800 && !this.statusDead) {
+    if (RIGHT && this.x < 2800 && !this.statusDead && !this.world.winTriggered) {
       this.x += this.speed;
       this.otherDirection = false;
     }
-    if (LEFT && this.x > -150 && !this.statusDead) {
+    if (LEFT && this.x > -150 && !this.statusDead && !this.world.winTriggered) {
       this.x -= this.speed;
       this.otherDirection = true;
     }
-    if (this.x < 2285 && !this.statusDead) {
+    if (this.x < 2285 && !this.statusDead && !this.world.winTriggered) {
       this.world.camera_x = -this.x + 50;
     }
   }
@@ -107,18 +107,28 @@ class Character extends MovableObject {
     if (noKeyPressed && !this.isAboveGround(180) && !this.statusDead) {
       this.idleAnimation();
     }
-    if ((k.RIGHT || k.LEFT) && !this.isAboveGround(180) && !this.statusDead) {
+    if ((k.RIGHT || k.LEFT) && !this.isAboveGround(180) && !this.statusDead && !this.world.winTriggered) {
       this.moveChar();
     }
-    if (k.SPACE && !this.isAboveGround(180) && !this.statusDead) {
+    if (k.SPACE && !this.isAboveGround(180) && !this.statusDead && !this.world.winTriggered) {
       this.speedY = -15;
       this.jumpAnimation();
     }
-    if (k.THROW && !this.isAboveGround(180) && !this.statusDead && this.collectedBottles > 0) {
-      this.collectedBottles -= 1;
-      this.throwBottle();
-      k.THROW = false;
+    if (k.THROW && this.checkThrowHelper()) {
+      this.throwAnimation();
     }
+  }
+
+  checkThrowHelper() {
+    if (!this.isAboveGround(180) && !this.statusDead && !this.world.winTriggered && this.collectedBottles > 0) {
+      return true;
+    }
+  }
+
+  throwAnimation() {
+    this.collectedBottles -= 1;
+    this.throwBottle();
+    this.world.keyboard.THROW = false;
   }
 
   moveChar() {

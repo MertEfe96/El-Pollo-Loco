@@ -49,8 +49,25 @@
           <button class="mobile-btn" id="btn-jump">Jump</button>
         </div>
       </div>
-      <div class="introOutro">
-        <button onclick="startGame()" id="startButton">START</button>
+      <div class="introOutro" id="introOutro">
+        <div class="overlay-content">
+          <div class="screen-panel" id="start-screen">
+            <button onclick="startGame()" id="startButton">START</button>
+          </div>
+          <div class="screen-panel" id="end-screen">
+            <p id="endMessage">Game over</p>
+            <div class="end-buttons">
+              <button onclick="restartGame()" id="restartButton">Restart</button>
+              <button onclick="quitGame()" id="quitButton">Back to Menu</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="portrait-warning">
+        <div class="warning-message">
+          <p>Please turn your device</p>
+          <span>Use landscape mode for the best game experience.</span>
+        </div>
       </div>
     </div>
     <!-- <div id="debug-overlay"><strong>Tasten:</strong> <span id="key-status">---</span></div> -->

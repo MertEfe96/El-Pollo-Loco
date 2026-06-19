@@ -8,6 +8,9 @@ class World {
   keyboard;
   camera_x = 0;
   gameOverTriggered = false;
+  running = true;
+  collisionInterval = null;
+  endTimeout = null;
   boss;
   winImage;
   winTriggered = false;
@@ -22,8 +25,9 @@ class World {
     this.boss = this.level.enemies.find((e) => e instanceof Boss);
     this.bossStatusBar = new BossStatusBar(this.boss);
     this.winImage = new Image();
-    this.winImage.src = "./img/9_intro_outro_screens/game_over/game over!.png";
+    this.winImage.src = "img/9_intro_outro_screens/game_over/You Win A.png";
     this.winTriggered = false;
+    this.running = true;
     this.draw();
     this.setWorld();
     this.checkCollisons();
@@ -51,13 +55,30 @@ class World {
   }
 
   checkCollisons() {
-    setInterval(() => {
+    this.collisionInterval = setInterval(() => {
       if (!this.character.statusDead) {
         this.collisionEnemie();
         this.collisionCollectable();
         this.checkBottleHitsEnemy();
       }
     }, 100);
+  }
+
+  destroy() {
+    this.running = false;
+    if (this.collisionInterval) {
+      clearInterval(this.collisionInterval);
+      this.collisionInterval = null;
+    }
+    if (this.endTimeout) {
+      clearTimeout(this.endTimeout);
+      this.endTimeout = null;
+    }
+    if (this.backgroundMusic) {
+      this.backgroundMusic.pause();
+      this.backgroundMusic.currentTime = 0;
+      this.backgroundMusic = null;
+    }
   }
 
   isBossVisible() {
@@ -128,6 +149,7 @@ class World {
   }
 
   draw() {
+    if (!this.running) return;
     this.checkGameOver();
     if (this.gameOverTriggered) return;
     this.checkWinCondition();
@@ -140,9 +162,9 @@ class World {
   checkWinCondition() {
     if (this.boss.statusDead && !this.winTriggered) {
       this.winTriggered = true;
-      setTimeout(() => {
-        document.querySelector(".introOutro").style.display = "flex";
-      }, 5000);
+      this.endTimeout = setTimeout(() => {
+        window.showEndScreen("You win!");
+      }, 3000);
     }
   }
 
@@ -150,8 +172,8 @@ class World {
     if (this.character.statusDead && this.character.deathAnimationDone) {
       if (!this.gameOverTriggered) {
         this.gameOverTriggered = true;
-        setTimeout(() => {
-          document.querySelector(".introOutro").style.display = "flex";
+        this.endTimeout = setTimeout(() => {
+          window.showEndScreen("Game over");
         }, 5000);
       }
     }

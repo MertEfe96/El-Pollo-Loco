@@ -18,10 +18,50 @@ function init() {
 }
 
 function startGame() {
+  if (world) {
+    world.destroy();
+    world = null;
+  }
   initLevel();
   world = new World(canvas, keyboard);
   document.querySelector(".introOutro").style.display = "none";
   getVolumeFromStorage();
+}
+
+function showStartScreen() {
+  const overlay = document.getElementById("introOutro");
+  const startScreen = document.getElementById("start-screen");
+  const endScreen = document.getElementById("end-screen");
+  overlay.style.display = "flex";
+  startScreen.style.display = "block";
+  endScreen.style.display = "none";
+}
+
+function showEndScreen(message) {
+  const overlay = document.getElementById("introOutro");
+  const startScreen = document.getElementById("start-screen");
+  const endScreen = document.getElementById("end-screen");
+  const endMessage = document.getElementById("endMessage");
+  overlay.style.display = "flex";
+  startScreen.style.display = "none";
+  endScreen.style.display = "block";
+  endMessage.textContent = message;
+}
+
+function restartGame() {
+  if (world) {
+    world.destroy();
+    world = null;
+  }
+  startGame();
+}
+
+function quitGame() {
+  if (world) {
+    world.destroy();
+    world = null;
+  }
+  showStartScreen();
 }
 
 window.addEventListener("keydown", (event) => {
@@ -42,14 +82,7 @@ function generateCoins(amount, minHorizontalDistance) {
   const coins = [];
   while (coins.length < amount) {
     const newCoin = new Coin();
-    let tooClose = false;
-    for (let existing of coins) {
-      const dx = Math.abs(existing.x - existing.width / 2 - (newCoin.x - newCoin.width / 2));
-      if (dx < minHorizontalDistance) {
-        tooClose = true;
-        break;
-      }
-    }
+    const tooClose = coinLoop(coins, newCoin, minHorizontalDistance);
     if (!tooClose) {
       coins.push(newCoin);
     }
@@ -57,19 +90,22 @@ function generateCoins(amount, minHorizontalDistance) {
   return coins;
 }
 
+function coinLoop(coins, newCoin, minHorizontalDistance) {
+  for (let existing of coins) {
+    const dx = Math.abs(existing.x - existing.width / 2 - (newCoin.x - newCoin.width / 2));
+    if (dx < minHorizontalDistance) {
+      return true;
+    }
+  }
+  return false;
+}
+
 function generateChickens(amount, minHorizontalDistance) {
   const chickens = [];
   const boss = new Boss();
   while (chickens.length < amount) {
     const newChicken = new Chicken();
-    let tooClose = false;
-    for (let existing of chickens) {
-      const dx = Math.abs(existing.x - existing.width / 2 - (newChicken.x - newChicken.width / 2));
-      if (dx < minHorizontalDistance) {
-        tooClose = true;
-        break;
-      }
-    }
+    const tooClose = chickenLoop(chickens, newChicken, minHorizontalDistance);
     if (!tooClose) {
       chickens.push(newChicken);
     }
@@ -78,11 +114,26 @@ function generateChickens(amount, minHorizontalDistance) {
   return chickens;
 }
 
+function chickenLoop(chickens, newChicken, minHorizontalDistance) {
+  for (let existing of chickens) {
+    const dx = Math.abs(existing.x - existing.width / 2 - (newChicken.x - newChicken.width / 2));
+    if (dx < minHorizontalDistance) {
+      return true;
+    }
+  }
+  return false;
+}
+
 function generateCoinsInArc(centerX, centerY, radius, count) {
   const coins = [];
   const startAngle = 0;
   const endAngle = -Math.PI;
   const step = (endAngle - startAngle) / (count - 1);
+  coinArcLoop(coins, startAngle, endAngle, radius, count, step, centerX, centerY);
+  return coins;
+}
+
+function coinArcLoop(coins, startAngle, endAngle, radius, count, step, centerX, centerY) {
   for (let i = 0; i < count; i++) {
     const angle = startAngle + i * step;
     const x = centerX + radius * Math.cos(angle);
@@ -93,7 +144,6 @@ function generateCoinsInArc(centerX, centerY, radius, count) {
     coin.baseY = y;
     coins.push(coin);
   }
-  return coins;
 }
 
 // function updateKeyStatus() {
