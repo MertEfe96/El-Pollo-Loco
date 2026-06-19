@@ -8,6 +8,10 @@ class StatusBar extends DrawableObject {
     "./img/7_statusbars/1_statusbar/2_statusbar_health/blue/100.png",
   ];
 
+  /**
+   * Create a player status bar that displays HP, coins, and bottles.
+   * @param {Character} character - The player character instance.
+   */
   constructor(character) {
     super();
     this.character = character;
@@ -25,6 +29,11 @@ class StatusBar extends DrawableObject {
     this.bottleImg.src = "./img/7_statusbars/3_icons/icon_salsa_bottle.png";
   }
 
+  /**
+   * Draw the player status bar to the canvas.
+   * @param {CanvasRenderingContext2D} ctx - Drawing context.
+   * @returns {void}
+   */
   drawStatus(ctx) {
     let hp = this.character.HP;
     let hpIndex = hp === 100 ? 5 : hp > 79 ? 4 : hp > 59 ? 3 : hp > 39 ? 2 : hp > 19 ? 1 : 0;
@@ -51,6 +60,11 @@ class BossStatusBar extends DrawableObject {
     "./img/7_statusbars/2_statusbar_endboss/orange.png",
   ];
 
+  /**
+   * Create a boss health status bar.
+   * @param {Boss} boss - The boss instance to track.
+   * @returns {void}
+   */
   constructor(boss) {
     super();
     this.boss = boss;
@@ -62,6 +76,11 @@ class BossStatusBar extends DrawableObject {
     this.loadImages(this.BOSS_BAR_IMAGES);
   }
 
+  /**
+   * Draw the boss health status bar.
+   * @param {CanvasRenderingContext2D} ctx - Drawing context.
+   * @returns {void}
+   */
   drawStatus(ctx) {
     let hp = this.boss.HP;
     let imgIndex;

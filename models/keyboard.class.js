@@ -15,6 +15,11 @@ class Keyboard {
     KeyE: "THROW",
   };
 
+  /**
+   * Mark a keyboard key as pressed and update the corresponding direction state.
+   * @param {string} key - The event code of the pressed key.
+   * @returns {void}
+   */
   action(key) {
     const direction = this.keyMap[key];
     if (direction) {
@@ -23,6 +28,11 @@ class Keyboard {
     }
   }
 
+  /**
+   * Release a keyboard key and update the corresponding direction state.
+   * @param {string} key - The event code of the released key.
+   * @returns {void}
+   */
   release(key) {
     const direction = this.keyMap[key];
     if (direction) {

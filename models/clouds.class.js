@@ -4,6 +4,9 @@ class Cloud extends MovableObject {
   rnd = this.cloudArr[this.rndNr];
   width = 250;
   height = 150;
+  /**
+   * Create a cloud object with randomized position and speed.
+   */
   constructor() {
     super().loadImage(`./img/5_background/layers/4_clouds/${this.rnd}.png`);
     this.x = Math.random() * 650;

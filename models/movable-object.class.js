@@ -10,6 +10,11 @@ class MovableObject extends DrawableObject {
     right: 0,
   };
 
+  /**
+   * Move this object leftwards across the screen.
+   * If the object leaves the canvas on the left, it wraps to the right.
+   * @returns {void}
+   */
   moveLeft() {
     this.x -= this.speed;
 
@@ -18,6 +23,11 @@ class MovableObject extends DrawableObject {
     }
   }
 
+  /**
+   * Animate movement by repeatedly moving left and playing frames.
+   * @param {string[]} arr - Image frames for the animation.
+   * @returns {void}
+   */
   animateMovement(arr) {
     setInterval(() => {
       this.moveLeft();
@@ -25,12 +35,22 @@ class MovableObject extends DrawableObject {
     }, 1000 / 8);
   }
 
+  /**
+   * Animate rotation frames for the object.
+   * @param {string[]} arr - Image frames for rotation.
+   * @returns {void}
+   */
   animateRotation(arr) {
     setInterval(() => {
       this.playAnimation(arr);
     }, 1000 / 4);
   }
 
+  /**
+   * Play a single animation cycle from the provided frame array.
+   * @param {string[]} arr - Image paths used for the animation.
+   * @returns {void}
+   */
   playAnimation(arr) {
     let i = this.currentImage % arr.length;
     let path = arr[i];
@@ -38,6 +58,11 @@ class MovableObject extends DrawableObject {
     this.currentImage++;
   }
 
+  /**
+   * Apply gravity to the object until it lands at a minimum Y coordinate.
+   * @param {number} minY - The ground level Y coordinate.
+   * @returns {void}
+   */
   applyGravity(minY) {
     setInterval(() => {
       if (this.isAboveGround(minY) || this.speedY < 0) {
@@ -50,17 +75,22 @@ class MovableObject extends DrawableObject {
     }, 1000 / 25);
   }
 
+  /**
+   * Determine whether the object is above a ground line.
+   * @param {number} minY - The ground level Y coordinate.
+   * @returns {boolean}
+   */
   isAboveGround(minY) {
     return this.y < minY;
   }
 
+  /**
+   * Draw a debug collision frame around the object.
+   * @param {CanvasRenderingContext2D} ctx - The drawing context.
+   * @returns {void}
+   */
   drawFrame(ctx) {
-    if (
-      this instanceof Character ||
-      this instanceof Chicken ||
-      this instanceof Coin ||
-      this instanceof Bottle
-    ) {
+    if (this instanceof Character || this instanceof Chicken || this instanceof Coin || this instanceof Bottle) {
       ctx.beginPath();
       ctx.lineWitdh = "5";
       ctx.strokeStyle = "blue";
@@ -68,12 +98,17 @@ class MovableObject extends DrawableObject {
         this.x + this.offset.left,
         this.y + this.offset.top,
         this.width - this.offset.right,
-        this.height - this.offset.bottom
+        this.height - this.offset.bottom,
       );
       ctx.stroke();
     }
   }
 
+  /**
+   * Check whether this object collides with another object.
+   * @param {MovableObject} obj - The object to test collision against.
+   * @returns {boolean}
+   */
   isColliding(obj) {
     return (
       this.x + this.width - this.offset.right >= obj.x + obj.offset.left && // R > L
@@ -83,6 +118,11 @@ class MovableObject extends DrawableObject {
     );
   }
 
+  /**
+   * Apply damage to this object from another colliding object.
+   * @param {MovableObject} obj - The object that caused the damage.
+   * @returns {void}
+   */
   isTakingDMG(obj) {
     const now = new Date().getTime();
     if (
@@ -99,6 +139,11 @@ class MovableObject extends DrawableObject {
     }
   }
 
+  /**
+   * Play the appropriate hurt or death sound for this object.
+   * @param {MovableObject} mo - The object whose sound should play.
+   * @returns {void}
+   */
   playSound(mo) {
     mo.isTouchingEnemy = true;
     if (mo.hurtSound) {
@@ -110,6 +155,10 @@ class MovableObject extends DrawableObject {
     }
   }
 
+  /**
+   * Determine whether this object is dead and update its status.
+   * @returns {boolean|undefined}
+   */
   isDead() {
     if (this.HP <= 1 && this instanceof Character) {
       this.statusDead = true;
@@ -122,6 +171,11 @@ class MovableObject extends DrawableObject {
     }
   }
 
+  /**
+   * Run the death animation for a dying character.
+   * @param {Character} char - The character instance to animate.
+   * @returns {void}
+   */
   playDead(char) {
     char.currentImage = 0;
     let i = 0;

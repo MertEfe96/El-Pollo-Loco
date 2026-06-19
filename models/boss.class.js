@@ -10,6 +10,9 @@ class Boss extends MovableObject {
     "./img/4_enemie_boss_chicken/2_alert/G12.png",
   ];
 
+  /**
+   * Create the boss enemy and start its alert animation.
+   */
   constructor() {
     super().loadImage("./img/4_enemie_boss_chicken/2_alert/G5.png");
     this.x = 2500;
@@ -21,6 +24,11 @@ class Boss extends MovableObject {
     this.animate(this.IMAGES_ALERT_BOSS);
   }
 
+  /**
+   * Animate boss alert frames.
+   * @param {string[]} arr - Alert image frames.
+   * @returns {void}
+   */
   animate(arr) {
     setInterval(() => {
       this.playAnimation(arr);

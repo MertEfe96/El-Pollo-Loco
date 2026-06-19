@@ -1,3 +1,6 @@
+/**
+ * Main game world that handles rendering, physics, collisions, and game state.
+ */
 class World {
   character = new Character();
   level = level1;
@@ -15,6 +18,11 @@ class World {
   winImage;
   winTriggered = false;
 
+  /**
+   * Create a new game world instance.
+   * @param {HTMLCanvasElement} canvas - The canvas element used for rendering.
+   * @param {Keyboard} keyboard - The keyboard input handler instance.
+   */
   constructor(canvas, keyboard) {
     this.ctx = canvas.getContext("2d");
     this.canvas = canvas;
@@ -43,10 +51,19 @@ class World {
     } catch (e) {}
   }
 
+  /**
+   * Associate the character with this world instance.
+   * @returns {void}
+   */
   setWorld() {
     this.character.world = this;
   }
 
+  /**
+   * Update world elements each frame.
+   * Moves background clouds and thrown objects.
+   * @returns {void}
+   */
   update() {
     this.level.clouds.forEach((cloud) => cloud.moveLeft());
     this.level.thrownObjects.forEach((bottle) => {
@@ -54,6 +71,10 @@ class World {
     });
   }
 
+  /**
+   * Begin periodic collision checks for the world.
+   * @returns {void}
+   */
   checkCollisons() {
     this.collisionInterval = setInterval(() => {
       if (!this.character.statusDead) {
@@ -64,6 +85,10 @@ class World {
     }, 100);
   }
 
+  /**
+   * Destroy the world and stop game loops, timeouts, and audio.
+   * @returns {void}
+   */
   destroy() {
     this.running = false;
     if (this.collisionInterval) {
@@ -81,10 +106,18 @@ class World {
     }
   }
 
+  /**
+   * Determine whether the boss object is currently visible on screen.
+   * @returns {boolean}
+   */
   isBossVisible() {
     return this.boss.x + this.boss.width > -this.camera_x && this.boss.x < -this.camera_x + this.canvas.width;
   }
 
+  /**
+   * Handle collision detection between the character and enemies.
+   * @returns {void}
+   */
   collisionEnemie() {
     const now = new Date().getTime();
     this.level.enemies.forEach((enemy) => {
@@ -104,6 +137,10 @@ class World {
     });
   }
 
+  /**
+   * Handle collisions between thrown bottles and enemies.
+   * @returns {void}
+   */
   checkBottleHitsEnemy() {
     this.level.thrownObjects.forEach((bottle) => {
       this.level.enemies.forEach((enemy) => {
@@ -124,6 +161,10 @@ class World {
     this.level.enemies = this.level.enemies.filter((e) => !e.isDead());
   }
 
+  /**
+   * Handle collisions between the character and collectible objects.
+   * @returns {void}
+   */
   collisionCollectable() {
     this.level.collectable.forEach((collectable) => {
       if (this.character.isColliding(collectable) && !this.character.isDead(this.character)) {
@@ -138,6 +179,11 @@ class World {
     });
   }
 
+  /**
+   * Inflict damage on an enemy and bounce the character.
+   * @param {MovableObject} enemy - The enemy to damage.
+   * @returns {void}
+   */
   killEnemy(enemy) {
     enemy.HP -= 20;
     this.level.enemies = this.level.enemies.filter((e) => !e.isDead());
@@ -148,6 +194,10 @@ class World {
     this.character.bounce();
   }
 
+  /**
+   * Main rendering loop for the world.
+   * @returns {void}
+   */
   draw() {
     if (!this.running) return;
     this.checkGameOver();
@@ -159,6 +209,10 @@ class World {
     requestAnimationFrame(() => this.draw());
   }
 
+  /**
+   * Check whether the win condition has been met and trigger the end screen.
+   * @returns {void}
+   */
   checkWinCondition() {
     if (this.boss.statusDead && !this.winTriggered) {
       this.winTriggered = true;
@@ -168,6 +222,14 @@ class World {
     }
   }
 
+  /**
+   * Check whether the character has died and trigger the game over screen.
+   * @returns {void}
+   */
+  /**
+   * Check whether the character has died and trigger the game over screen.
+   * @returns {void}
+   */
   checkGameOver() {
     if (this.character.statusDead && this.character.deathAnimationDone) {
       if (!this.gameOverTriggered) {
@@ -179,6 +241,10 @@ class World {
     }
   }
 
+  /**
+   * Draw the world scene to the canvas.
+   * @returns {void}
+   */
   drawScene() {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     this.ctx.translate(this.camera_x, 0);
@@ -192,6 +258,10 @@ class World {
     this.ctx.translate(-this.camera_x, 0);
   }
 
+  /**
+   * Draw the status bars for the player and boss.
+   * @returns {void}
+   */
   drawStatusBars() {
     this.statusBar.drawStatus(this.ctx);
     if (this.isBossVisible()) {
@@ -199,6 +269,10 @@ class World {
     }
   }
 
+  /**
+   * Draw overlay images such as game over and win screens.
+   * @returns {void}
+   */
   drawOverlays() {
     if (this.character.statusDead && !this.character.deathAnimationDone) {
       this.ctx.drawImage(this.gameOverImage, 0, 0, this.canvas.width, this.canvas.height);
@@ -208,12 +282,22 @@ class World {
     }
   }
 
+  /**
+   * Add all provided objects to the render queue.
+   * @param {Array<DrawableObject>} objects - Objects to draw.
+   * @returns {void}
+   */
   addObjectsToMap(objects) {
     objects.forEach((o) => {
       this.addMapObject(o);
     });
   }
 
+  /**
+   * Draw a single map object to the canvas.
+   * @param {DrawableObject} mo - The object to render.
+   * @returns {void}
+   */
   addMapObject(mo) {
     if (!mo || !mo.img || !(mo.img instanceof HTMLImageElement)) {
       return;
@@ -227,6 +311,11 @@ class World {
     //mo.drawFrame(this.ctx);
   }
 
+  /**
+   * Flip the rendering context horizontally for mirrored objects.
+   * @param {DrawableObject} mo - The object to draw flipped.
+   * @returns {void}
+   */
   flipImage(mo) {
     this.ctx.save();
     this.ctx.translate(mo.x + mo.width, 0);
@@ -237,6 +326,11 @@ class World {
     this.ctx.restore();
   }
 
+  /**
+   * Set the global world audio volume.
+   * @param {number} value - A normalized volume value between 0 and 1.
+   * @returns {void}
+   */
   setVolume(value) {
     this.volume = Math.max(0, Math.min(1, value));
 
@@ -253,6 +347,10 @@ class World {
     }
   }
 
+  /**
+   * Retrieve the current world audio volume.
+   * @returns {number}
+   */
   getVolume() {
     return this.volume;
   }

@@ -1,4 +1,13 @@
+/**
+ * Global level definition object used by the game world.
+ * @type {Level}
+ */
 let level1;
+
+/**
+ * Initialize the first level and prepare enemies, backgrounds, and collectables.
+ * @returns {void}
+ */
 function initLevel() {
   let arc1 = generateCoinsInArc(500, 250, 100, 5);
   let arc2 = generateCoinsInArc(1200, 200, 80, 5);
@@ -23,6 +32,14 @@ function initLevel() {
     ],
   ];
 
+  /**
+   *
+   * @returns {Array} - Array of the background Images
+   */
+  /**
+   * Build the background tile array for the level.
+   * @returns {Background[]}
+   */
   const buildBg = () => {
     let bgArray = [];
     for (let i = 0; i < 5; i++) {

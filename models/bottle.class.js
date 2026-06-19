@@ -24,6 +24,9 @@ class Bottle extends MovableObject {
     "./img/6_salsa_bottle/bottle_rotation/bottle_splash/6_bottle_splash.png",
   ];
 
+  /**
+   * Create a bottle collectable with rotation and splash animations.
+   */
   constructor() {
     super().loadImage("img/6_salsa_bottle/1_salsa_bottle_on_ground.png");
     this.loadImages(this.IMAGES_BOTTLE_GROUND);
@@ -38,6 +41,10 @@ class Bottle extends MovableObject {
   isSplashing = false;
   hasHit = false;
 
+  /**
+   * Play the bottle splash animation when the bottle hits an enemy.
+   * @returns {void}
+   */
   splash() {
     if (this.isSplashing) return;
     this.isSplashing = true;

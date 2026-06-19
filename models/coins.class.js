@@ -9,6 +9,9 @@ class Coin extends MovableObject {
     right: 50,
   };
 
+  /**
+   * Create a floating coin collectible with a vertical bobbing motion.
+   */
   constructor() {
     super().loadImage(this.IMAGES_FLOATING_COIN[0]);
     this.x = 250 + Math.random() * 1500;
@@ -18,6 +21,10 @@ class Coin extends MovableObject {
     this.float();
   }
 
+  /**
+   * Animate the coin floating up and down over time.
+   * @returns {void}
+   */
   float() {
     setInterval(() => {
       this.floatAngle += 0.05;

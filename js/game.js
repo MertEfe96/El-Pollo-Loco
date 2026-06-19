@@ -13,10 +13,19 @@ const controls = [
   {id: "btn-throw", key: "KeyE"},
 ];
 
+/**
+ * Initialize the game canvas element.
+ * @returns {void}
+ */
 function init() {
   canvas = document.getElementById("canvas");
 }
 
+/**
+ * Start or restart the current game session.
+ * Destroys any existing world and creates a new one.
+ * @returns {void}
+ */
 function startGame() {
   if (world) {
     world.destroy();
@@ -28,6 +37,10 @@ function startGame() {
   getVolumeFromStorage();
 }
 
+/**
+ * Display the start screen overlay.
+ * @returns {void}
+ */
 function showStartScreen() {
   const overlay = document.getElementById("introOutro");
   const startScreen = document.getElementById("start-screen");
@@ -37,6 +50,11 @@ function showStartScreen() {
   endScreen.style.display = "none";
 }
 
+/**
+ * Display the end screen overlay with a message.
+ * @param {string} message - The message to show to the player.
+ * @returns {void}
+ */
 function showEndScreen(message) {
   const overlay = document.getElementById("introOutro");
   const startScreen = document.getElementById("start-screen");
@@ -48,6 +66,10 @@ function showEndScreen(message) {
   endMessage.textContent = message;
 }
 
+/**
+ * Restart the game by destroying the current world and starting again.
+ * @returns {void}
+ */
 function restartGame() {
   if (world) {
     world.destroy();
@@ -56,6 +78,10 @@ function restartGame() {
   startGame();
 }
 
+/**
+ * Quit the current game and return to the start screen.
+ * @returns {void}
+ */
 function quitGame() {
   if (world) {
     world.destroy();
@@ -78,6 +104,12 @@ window.addEventListener("keyup", (event) => {
   // updateKeyStatus();
 });
 
+/**
+ * Generate a specific number of coin objects spaced at least a minimum distance apart.
+ * @param {number} amount - The number of coins to create.
+ * @param {number} minHorizontalDistance - Minimum distance between each coin horizontally.
+ * @returns {Coin[]}
+ */
 function generateCoins(amount, minHorizontalDistance) {
   const coins = [];
   while (coins.length < amount) {
@@ -90,6 +122,13 @@ function generateCoins(amount, minHorizontalDistance) {
   return coins;
 }
 
+/**
+ * Check whether a new coin is too close to existing coins.
+ * @param {Coin[]} coins - Existing coins already generated.
+ * @param {Coin} newCoin - The candidate coin to validate.
+ * @param {number} minHorizontalDistance - Minimum horizontal spacing.
+ * @returns {boolean} True if the candidate is too close to any existing coin.
+ */
 function coinLoop(coins, newCoin, minHorizontalDistance) {
   for (let existing of coins) {
     const dx = Math.abs(existing.x - existing.width / 2 - (newCoin.x - newCoin.width / 2));
@@ -100,6 +139,12 @@ function coinLoop(coins, newCoin, minHorizontalDistance) {
   return false;
 }
 
+/**
+ * Generate a list of enemy chickens plus a boss with horizontal spacing.
+ * @param {number} amount - The number of chickens to generate.
+ * @param {number} minHorizontalDistance - Minimum distance between each enemy.
+ * @returns {(Chicken|Boss)[]}
+ */
 function generateChickens(amount, minHorizontalDistance) {
   const chickens = [];
   const boss = new Boss();
@@ -114,6 +159,13 @@ function generateChickens(amount, minHorizontalDistance) {
   return chickens;
 }
 
+/**
+ * Check whether a new enemy is too close to existing enemies.
+ * @param {(Chicken|Boss)[]} chickens - The existing enemy collection.
+ * @param {Chicken} newChicken - The candidate enemy to validate.
+ * @param {number} minHorizontalDistance - Minimum horizontal spacing.
+ * @returns {boolean} True if the candidate is too close to any existing enemy.
+ */
 function chickenLoop(chickens, newChicken, minHorizontalDistance) {
   for (let existing of chickens) {
     const dx = Math.abs(existing.x - existing.width / 2 - (newChicken.x - newChicken.width / 2));
@@ -124,6 +176,14 @@ function chickenLoop(chickens, newChicken, minHorizontalDistance) {
   return false;
 }
 
+/**
+ * Generate a semicircle arc of coins.
+ * @param {number} centerX - X coordinate of the arc center.
+ * @param {number} centerY - Y coordinate of the arc center.
+ * @param {number} radius - Radius of the arc.
+ * @param {number} count - Number of coins to place along the arc.
+ * @returns {Coin[]}
+ */
 function generateCoinsInArc(centerX, centerY, radius, count) {
   const coins = [];
   const startAngle = 0;
@@ -133,6 +193,18 @@ function generateCoinsInArc(centerX, centerY, radius, count) {
   return coins;
 }
 
+/**
+ * Place coins along an arc and update the provided coin array.
+ * @param {Coin[]} coins - Array to append generated coins to.
+ * @param {number} startAngle - Starting angle in radians.
+ * @param {number} endAngle - Ending angle in radians.
+ * @param {number} radius - Radius of the arc.
+ * @param {number} count - Number of coins to create.
+ * @param {number} step - Angle step between coins.
+ * @param {number} centerX - Center X coordinate.
+ * @param {number} centerY - Center Y coordinate.
+ * @returns {void}
+ */
 function coinArcLoop(coins, startAngle, endAngle, radius, count, step, centerX, centerY) {
   for (let i = 0; i < count; i++) {
     const angle = startAngle + i * step;
@@ -163,6 +235,10 @@ window.addEventListener("input", () => {
   checkVolumeLevel(slider, volume);
 });
 
+/**
+ * Mute the game audio and update the volume slider.
+ * @returns {void}
+ */
 function muteGame() {
   const slider = document.getElementById("volumeSlider");
   slider.value = 0;
@@ -173,6 +249,12 @@ function muteGame() {
   localStorage.setItem("Sound", 0);
 }
 
+/**
+ * Update the volume icon based on current slider value.
+ * @param {HTMLInputElement} slider - The volume slider element.
+ * @param {number} volume - The current volume.
+ * @returns {void}
+ */
 function checkVolumeLevel(slider, volume) {
   const icon = document.getElementById("volumeIcon");
   if (volume == 0) {
@@ -182,16 +264,30 @@ function checkVolumeLevel(slider, volume) {
   }
 }
 
+/**
+ * Show an input element by id.
+ * @param {string} id - The element id to show.
+ * @returns {void}
+ */
 function showInput(id) {
   input = document.getElementById(id);
   input.style.display = "block";
 }
 
+/**
+ * Hide an input element by id.
+ * @param {string} id - The element id to hide.
+ * @returns {void}
+ */
 function hideInput(id) {
   input = document.getElementById(id);
   input.style.display = "none";
 }
 
+/**
+ * Request fullscreen mode for the game canvas.
+ * @returns {void}
+ */
 function fullscreen() {
   canvas.requestFullscreen();
 }
@@ -200,6 +296,10 @@ function fullscreen() {
 // This function sets up mobile controls for the game
 // It binds touch events to buttons for left, right, jump, and throw actions
 
+/**
+ * Configure mobile touch controls for game buttons.
+ * @returns {void}
+ */
 function setMobileControls() {
   controls.forEach(({id, key}) => {
     const btn = document.getElementById(id);
@@ -218,6 +318,10 @@ function setMobileControls() {
 
 window.addEventListener("DOMContentLoaded", setMobileControls);
 
+/**
+ * Load saved volume settings from local storage and apply them.
+ * @returns {void}
+ */
 function getVolumeFromStorage() {
   const soundSetting = localStorage.getItem("Sound");
   if (soundSetting !== null) {
