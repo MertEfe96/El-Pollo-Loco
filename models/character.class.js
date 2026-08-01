@@ -11,6 +11,8 @@ class Character extends MovableObject {
   collectedBottles = 0;
   lastHitTime = 0;
   invincibilityDuration = 1000;
+  lastThrowTime = 0;
+  throwCooldown = 2000;
   isTouchingEnemy = false;
   deathAnimationDone = false;
   longIdleDelay = 5000;
@@ -154,6 +156,7 @@ class Character extends MovableObject {
     }
     if (k.THROW && this.checkThrowHelper()) {
       this.throwAnimation();
+      this.lastInputTime = Date.now();
     }
     if ((k.RIGHT || k.LEFT || k.SPACE || k.THROW) && !this.statusDead) {
       this.lastInputTime = Date.now();
@@ -163,12 +166,17 @@ class Character extends MovableObject {
 
   /**
    * Determine whether the character can throw a bottle.
-   * @returns {boolean|undefined}
+   * @returns {boolean}
    */
   checkThrowHelper() {
-    if (!this.isAboveGround(180) && !this.statusDead && !this.world.winTriggered && this.collectedBottles > 0) {
-      return true;
-    }
+    const cooldownElapsed = Date.now() - this.lastThrowTime >= this.throwCooldown;
+    return (
+      !this.isAboveGround(180) &&
+      !this.statusDead &&
+      !this.world.winTriggered &&
+      this.collectedBottles > 0 &&
+      cooldownElapsed
+    );
   }
 
   /**
@@ -177,6 +185,7 @@ class Character extends MovableObject {
    */
   throwAnimation() {
     this.collectedBottles -= 1;
+    this.lastThrowTime = Date.now();
     this.throwBottle();
     this.world.keyboard.THROW = false;
   }
@@ -241,7 +250,7 @@ class Character extends MovableObject {
    */
   throwBottle() {
     const bottle = new Bottle();
-    bottle.x = this.x + (this.otherDirection ? -30 : this.width + 5);
+    bottle.x = this.x + (this.otherDirection ? +10 : this.width - 80);
     bottle.y = this.y + this.height / 1.8;
     bottle.speedX = this.otherDirection ? -2 : 2;
     bottle.speedY = -15;

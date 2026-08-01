@@ -52,6 +52,29 @@ canvas {
   bottom: 50px;
 }
 
+.canvasButtons {
+  display: flex;
+  align-items: center;
+  gap: 150px;
+  z-index: 9999;
+}
+
+.controlModeBtn {
+  font-family: "SourGummy", Arial, Helvetica, sans-serif;
+  font-size: 14px;
+  color: #fff;
+  background: rgba(34, 34, 34, 0.75);
+  border: 1px solid #ffd700;
+  border-radius: 999px;
+  padding: 6px 12px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.controlModeBtn:hover {
+  background: rgba(68, 68, 68, 0.9);
+}
+
 .volumeControl {
   display: flex;
   width: 120px;
@@ -137,6 +160,11 @@ canvas {
   gap: 24px;
 }
 
+body.controls-mobile .mobile-controls,
+.mobile-controls.show {
+  display: flex;
+}
+
 .mobileDiv {
   display: flex;
   justify-content: space-between;
@@ -144,12 +172,12 @@ canvas {
 }
 
 .jc-sb {
-  width: 95% !important;
+  width: 97% !important;
 }
 
 .mobile-btn {
   font-family: "SourGummy", Arial, Helvetica, sans-serif;
-  font-size: 2rem;
+  font-size: 26px;
   background: rgba(34, 34, 34, 0.45);
   color: #ffd700;
   border: 2px solid #444;
@@ -167,6 +195,10 @@ canvas {
   background: #222;
 }
 
+#btn-left {
+  max-height: 40px;
+}
+
 .bottleMobileButtonImg {
   width: 40px;
   height: 40px;
@@ -180,10 +212,13 @@ footer {
 }
 
 @media only screen and (max-width: 900px) {
-  .mobile-controls {
+  body:not(.controls-mobile) .mobile-controls {
     display: flex;
   }
   #controls {
+    display: none;
+  }
+  .canvasButtons {
     display: none;
   }
 }

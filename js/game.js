@@ -19,6 +19,7 @@ const controls = [
  */
 function init() {
   canvas = document.getElementById("canvas");
+  initControlToggle();
 }
 
 /**
@@ -317,6 +318,31 @@ function setMobileControls() {
 }
 
 window.addEventListener("DOMContentLoaded", setMobileControls);
+
+/**
+ * Toggle the in-canvas mobile control overlay on demand.
+ * @returns {void}
+ */
+function initControlToggle() {
+  const toggleButton = document.getElementById("controlModeToggle");
+  const mobileControls = document.getElementById("mobile-controls");
+
+  if (!toggleButton || !mobileControls) return;
+
+  const updateToggle = () => {
+    const isMobileView = document.body.classList.contains("controls-mobile");
+    mobileControls.classList.toggle("show", isMobileView);
+    toggleButton.textContent = isMobileView ? "Switch to PC" : "Switch to Mobile";
+    toggleButton.setAttribute("aria-pressed", isMobileView ? "true" : "false");
+  };
+
+  toggleButton.addEventListener("click", () => {
+    document.body.classList.toggle("controls-mobile");
+    updateToggle();
+  });
+
+  updateToggle();
+}
 
 /**
  * Load saved volume settings from local storage and apply them.

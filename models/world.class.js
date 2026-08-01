@@ -147,7 +147,7 @@ class World {
         if (bottle.isColliding(enemy) && !bottle.hasHit) {
           bottle.hasHit = true;
           enemy.HP -= 20;
-          if (bottle && typeof bottle.splash === "function") {
+          if ((bottle && typeof bottle.splash === "function") || bottle.y <= 330) {
             bottle.splash();
           } else {
             bottle.markForRemoval = true;
@@ -159,6 +159,18 @@ class World {
     this.level.thrownObjects = this.level.thrownObjects.filter((b) => !b.markForRemoval);
 
     this.level.enemies = this.level.enemies.filter((e) => !e.isDead());
+  }
+
+  /**
+   * Trigger a bottle splash when it hits the ground.
+   * @param {Bottle} bottle - The bottle to evaluate.
+   * @returns {void}
+   */
+  checkBottleGroundHit(bottle) {
+    if (bottle.y >= 330 && bottle.speedY >= 0) {
+      bottle.hasHit = true;
+      bottle.splash();
+    }
   }
 
   /**

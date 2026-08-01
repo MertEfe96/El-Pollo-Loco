@@ -42,7 +42,7 @@ class Bottle extends MovableObject {
   hasHit = false;
 
   /**
-   * Play the bottle splash animation when the bottle hits an enemy.
+   * Play the bottle splash animation when the bottle hits an enemy or the ground.
    * @returns {void}
    */
   splash() {

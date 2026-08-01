@@ -41,15 +41,54 @@ class StatusBar extends DrawableObject {
 
     ctx.drawImage(hpImg, this.x + 10, this.y, 150, 50);
 
-    ctx.drawImage(this.coinImg, this.x + 10, this.y + 50, 30, 30);
+    ctx.drawImage(this.coinImg, this.x + 10, this.y + 50, 40, 40);
     ctx.fillStyle = "white";
-    ctx.font = "16px Arial";
-    ctx.fillText(`${this.character.collectedCoins}`, this.x + 50, this.y + 72);
+    ctx.font = "20px Arial";
+    ctx.fillText(`${this.character.collectedCoins}`, this.x + 50, this.y + 80);
 
-    ctx.drawImage(this.bottleImg, this.x + 115, this.y + 50, 30, 30);
+    this.drawThrowCooldown(ctx);
+    ctx.drawImage(this.bottleImg, this.x + 115, this.y + 50, 40, 40);
     ctx.fillStyle = "white";
-    ctx.font = "16px Arial";
-    ctx.fillText(`${this.character.collectedBottles}`, this.x + 150, this.y + 70);
+    ctx.font = "20px Arial";
+    ctx.fillText(`${this.character.collectedBottles}`, this.x + 160, this.y + 80);
+  }
+
+  /**
+   * Draw the bottle throw cooldown and its current state.
+   * @param {CanvasRenderingContext2D} ctx - The drawing context.
+   * @returns {void}
+   */
+  drawThrowCooldown(ctx) {
+    const elapsed = Date.now() - this.character.lastThrowTime;
+    const progress = Math.min(elapsed / this.character.throwCooldown, 1);
+    const hasBottles = this.character.collectedBottles > 0;
+    const isReady = progress >= 1 && hasBottles;
+    const centerX = this.x + 134;
+    const centerY = this.y + 70;
+    const radius = 22;
+
+    this.drawCircle(ctx, centerX, centerY, radius, hasBottles);
+
+    if (hasBottles) {
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, radius, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * progress);
+      ctx.strokeStyle = isReady ? "#4ade80" : "#f59e0b";
+      ctx.lineWidth = 4;
+      ctx.stroke();
+    }
+  }
+
+  drawCircle(ctx, centerX, centerY, radius, progress, hasBottles) {
+    ctx.beginPath();
+    if (!hasBottles) {
+      ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+      ctx.strokeStyle = "#d1d5db";
+    } else {
+      ctx.arc(centerX, centerY, radius, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * progress);
+      ctx.strokeStyle = isReady ? "#4ade80" : "#f59e0b";
+    }
+    ctx.lineWidth = 4;
+    ctx.stroke();
   }
 }
 
