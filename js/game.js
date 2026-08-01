@@ -12,6 +12,7 @@ const controls = [
   {id: "btn-jump", key: "Space"},
   {id: "btn-throw", key: "KeyE"},
 ];
+const isTouchFirst = navigator.maxTouchPoints > 0 && matchMedia("(pointer: coarse)").matches;
 
 /**
  * Initialize the game canvas element.
@@ -36,6 +37,20 @@ function startGame() {
   world = new World(canvas, keyboard);
   document.querySelector(".introOutro").style.display = "none";
   getVolumeFromStorage();
+  if (isTouchFirst) {
+    setToMobile();
+  }
+}
+
+function setToMobile() {
+  document.body.classList.add("controls-mobile");
+  document.getElementById("mobile-controls").classList.add("show");
+  document.getElementById("controls").style.display = "none";
+  document.getElementById("canvasMenu").style.bottom = "auto";
+  document.getElementById("canvasMenu").style.top = "30px";
+  document.getElementById("canvasMenu").style.position = "absolute";
+  document.getElementById("canvasMenu").style.right = "25px";
+  document.getElementById("canvasMenu").style.justifyContent = "end";
 }
 
 /**
