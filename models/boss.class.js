@@ -10,6 +10,13 @@ class Boss extends MovableObject {
     "./img/4_enemie_boss_chicken/2_alert/G12.png",
   ];
 
+  IMAGES_BOSS_MOVING = [
+    "./img/4_enemie_boss_chicken/1_walk/G1.png",
+    "./img/4_enemie_boss_chicken/1_walk/G2.png",
+    "./img/4_enemie_boss_chicken/1_walk/G3.png",
+    "./img/4_enemie_boss_chicken/1_walk/G4.png",
+  ];
+
   /**
    * Create the boss enemy and start its alert animation.
    */
@@ -19,9 +26,12 @@ class Boss extends MovableObject {
     this.height = 280;
     this.width = 280;
     this.y = 160;
+    this.speed = 3;
 
     this.loadImages(this.IMAGES_ALERT_BOSS);
-    this.animate(this.IMAGES_ALERT_BOSS);
+    // this.animate(this.IMAGES_ALERT_BOSS);
+    this.loadImages(this.IMAGES_BOSS_MOVING);
+    this.animateMovement(this.IMAGES_BOSS_MOVING);
   }
 
   /**

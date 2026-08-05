@@ -252,7 +252,7 @@ class Character extends MovableObject {
     const bottle = new Bottle();
     bottle.x = this.x + (this.otherDirection ? +10 : this.width - 80);
     bottle.y = this.y + this.height / 1.8;
-    bottle.speedX = this.otherDirection ? -2 : 2;
+    bottle.speedX = this.otherDirection ? -4 : 4;
     bottle.speedY = -15;
     bottle.otherDirection = this.otherDirection;
     bottle.applyGravity(330);

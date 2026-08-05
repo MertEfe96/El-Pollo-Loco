@@ -123,9 +123,9 @@ class BossStatusBar extends DrawableObject {
   drawStatus(ctx) {
     let hp = this.boss.HP;
     let imgIndex;
-    if (this.boss.statusDead) {
+    if (hp < 21) {
       imgIndex = 2; // orange
-    } else if (hp < 40) {
+    } else if (hp < 41) {
       imgIndex = 1; // green
     } else {
       imgIndex = 0; // blue

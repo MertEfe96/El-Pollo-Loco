@@ -17,12 +17,8 @@ class World {
   boss;
   winImage;
   winTriggered = false;
+  lastFrameTime = 0;
 
-  /**
-   * Create a new game world instance.
-   * @param {HTMLCanvasElement} canvas - The canvas element used for rendering.
-   * @param {Keyboard} keyboard - The keyboard input handler instance.
-   */
   constructor(canvas, keyboard) {
     this.ctx = canvas.getContext("2d");
     this.canvas = canvas;
@@ -36,10 +32,10 @@ class World {
     this.winImage.src = "img/9_intro_outro_screens/game_over/You Win A.png";
     this.winTriggered = false;
     this.running = true;
-    this.draw();
+    this.lastFrameTime = performance.now();
+    requestAnimationFrame((t) => this.draw(t));
     this.setWorld();
     this.checkCollisons();
-
     try {
       this.backgroundMusic = new Audio("audio/BGM/juliush-fiesta-en-guadalajara-mariachi-de-la-calle-503318.mp3");
       this.backgroundMusic.loop = true;
@@ -64,10 +60,11 @@ class World {
    * Moves background clouds and thrown objects.
    * @returns {void}
    */
-  update() {
-    this.level.clouds.forEach((cloud) => cloud.moveLeft());
+  update(delta = 16.6667) {
+    const step = delta / (1000 / 60);
+    this.level.clouds.forEach((cloud) => cloud.moveLeft(step));
     this.level.thrownObjects.forEach((bottle) => {
-      bottle.x += bottle.speedX;
+      bottle.x += bottle.speedX * step;
     });
   }
 
@@ -81,8 +78,9 @@ class World {
         this.collisionEnemie();
         this.collisionCollectable();
         this.checkBottleHitsEnemy();
+        this.checkBottleGroundHit();
       }
-    }, 100);
+    }, 50);
   }
 
   /**
@@ -163,14 +161,15 @@ class World {
 
   /**
    * Trigger a bottle splash when it hits the ground.
-   * @param {Bottle} bottle - The bottle to evaluate.
    * @returns {void}
    */
-  checkBottleGroundHit(bottle) {
-    if (bottle.y >= 330 && bottle.speedY >= 0) {
-      bottle.hasHit = true;
-      bottle.splash();
-    }
+  checkBottleGroundHit() {
+    this.level.thrownObjects.forEach((bottle) => {
+      if (bottle.y > 325) {
+        bottle.splash();
+        bottle.markForRemoval = true;
+      }
+    });
   }
 
   /**
@@ -207,18 +206,24 @@ class World {
   }
 
   /**
-   * Main rendering loop for the world.
+   * Main rendering loop for the world. Forces a 60 FPS update rate and draws the scene, status bars, and overlays.
    * @returns {void}
    */
-  draw() {
+  draw(timestamp) {
     if (!this.running) return;
+
+    const delta = Math.min(timestamp - this.lastFrameTime, 100);
+    this.lastFrameTime = timestamp;
+
     this.checkGameOver();
     if (this.gameOverTriggered) return;
     this.checkWinCondition();
-    this.drawScene();
+
+    this.drawScene(delta);
     this.drawStatusBars();
     this.drawOverlays();
-    requestAnimationFrame(() => this.draw());
+
+    requestAnimationFrame((t) => this.draw(t));
   }
 
   /**
@@ -257,10 +262,10 @@ class World {
    * Draw the world scene to the canvas.
    * @returns {void}
    */
-  drawScene() {
+  drawScene(delta) {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     this.ctx.translate(this.camera_x, 0);
-    this.update();
+    this.update(delta);
     this.addObjectsToMap(this.level.background);
     this.addObjectsToMap(this.level.clouds);
     this.addObjectsToMap(this.level.collectable);
