@@ -17,6 +17,7 @@
     <script src="./models/statusbar.class.js"></script>
     <script src="./models/bottle.class.js"></script>
     <script src="./models/character.class.js"></script>
+    <script src="./models/egg.class.js"></script>
     <script src="./levels/level1.js"></script>
     <script src="./js/game.js"></script>
     <link rel="apple-touch-icon" sizes="180x180" href="./img/favicon/android-chrome-192x192.png" />
@@ -55,12 +56,18 @@
         <div class="overlay-content">
           <div class="screen-panel" id="start-screen">
             <button onclick="startGame()" id="startButton">START</button>
+            <button id="impressumButton">
+              <a class="impressumButtonLink" href="./impressum.html">Impressum</a>
+            </button>
           </div>
           <div class="screen-panel" id="end-screen">
             <p id="endMessage">Game over</p>
             <div class="end-buttons">
               <button onclick="restartGame()" id="restartButton">Restart</button>
               <button onclick="quitGame()" id="quitButton">Back to Menu</button>
+              <button id="impressumButton">
+                <a class="impressumButtonLink" href="./impressum.html">Impressum</a>
+              </button>
             </div>
           </div>
         </div>
@@ -72,7 +79,6 @@
         </div>
       </div>
     </div>
-    <!-- <div id="debug-overlay"><strong>Tasten:</strong> <span id="key-status">---</span></div> -->
     <div id="controls">
       <div class="game-controls">
         <h2>Controls</h2>

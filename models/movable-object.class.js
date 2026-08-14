@@ -2,7 +2,7 @@ class MovableObject extends DrawableObject {
   speedY = 0;
   speedX = 0;
   HP = 60;
-  acceleration = 1;
+  acceleration = 1.5;
   offset = {
     top: 0,
     bottom: 0,
@@ -38,12 +38,16 @@ class MovableObject extends DrawableObject {
   /**
    * Animate rotation frames for the object.
    * @param {string[]} arr - Image frames for rotation.
+   * @param {number} time - Frames per second for the rotation animation.
    * @returns {void}
    */
-  animateRotation(arr) {
+  animateRotation(arr, time) {
     setInterval(() => {
+      if (this instanceof Bottle && this.isSplashing) {
+        return;
+      }
       this.playAnimation(arr);
-    }, 1000 / 4);
+    }, 1000 / time);
   }
 
   /**

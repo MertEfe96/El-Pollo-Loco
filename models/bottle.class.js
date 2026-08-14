@@ -34,7 +34,7 @@ class Bottle extends MovableObject {
     this.loadImages(this.IMAGES_BOTTLE_SPLASH);
     this.x = 250 + Math.random() * 1500;
     this.y = 330 - Math.random() * 200;
-    this.animateRotation(this.IMAGES_BOTTLE_GROUND);
+    this.animateRotation(this.IMAGES_BOTTLE_GROUND, 4);
   }
 
   markForRemoval = false;

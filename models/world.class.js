@@ -18,6 +18,7 @@ class World {
   winImage;
   winTriggered = false;
   lastFrameTime = 0;
+  lastBossEggTime = 0;
 
   constructor(canvas, keyboard) {
     this.ctx = canvas.getContext("2d");
@@ -28,6 +29,7 @@ class World {
     this.gameOverImage.src = "./img/9_intro_outro_screens/game_over/oh no you lost!.png";
     this.boss = this.level.enemies.find((e) => e instanceof Boss);
     this.bossStatusBar = new BossStatusBar(this.boss);
+    this.lastBossEggTime = 0;
     this.winImage = new Image();
     this.winImage.src = "img/9_intro_outro_screens/game_over/You Win A.png";
     this.winTriggered = false;
@@ -36,15 +38,10 @@ class World {
     requestAnimationFrame((t) => this.draw(t));
     this.setWorld();
     this.checkCollisons();
-    try {
-      this.backgroundMusic = new Audio("audio/BGM/juliush-fiesta-en-guadalajara-mariachi-de-la-calle-503318.mp3");
-      this.backgroundMusic.loop = true;
-      this.backgroundMusic.volume = this.volume;
-      const playPromise = this.backgroundMusic.play();
-      if (playPromise !== undefined) {
-        playPromise.catch(() => {});
-      }
-    } catch (e) {}
+    this.backgroundMusic = new Audio("audio/BGM/juliush-fiesta-en-guadalajara-mariachi-de-la-calle-503318.mp3");
+    this.backgroundMusic.loop = true;
+    this.backgroundMusic.volume = this.volume;
+    const playPromise = this.backgroundMusic.play();
   }
 
   /**
@@ -66,6 +63,24 @@ class World {
     this.level.thrownObjects.forEach((bottle) => {
       bottle.x += bottle.speedX * step;
     });
+
+    // Boss throws an egg every 3 seconds while visible on screen
+    if (this.boss && !this.boss.statusDead) {
+      const now = performance.now();
+      if (this.isBossVisible()) {
+        if (!this.lastBossEggTime) this.lastBossEggTime = now;
+        if (now - this.lastBossEggTime >= 3000) {
+          const egg = new Egg();
+          egg.x = this.boss.x + this.boss.width / 2 - egg.width / 2;
+          egg.y = this.boss.y + this.boss.height / 2;
+          egg.speedX = -6; // travels left
+          this.level.thrownObjects.push(egg);
+          this.lastBossEggTime = now;
+        }
+      } else {
+        this.lastBossEggTime = now;
+      }
+    }
   }
 
   /**
@@ -78,9 +93,46 @@ class World {
         this.collisionEnemie();
         this.collisionCollectable();
         this.checkBottleHitsEnemy();
+        this.checkProjectilesHitCharacter();
         this.checkBottleGroundHit();
       }
     }, 50);
+  }
+
+  /**
+   * Check thrown projectiles (eggs) hitting the player character.
+   * Removes projectiles after hit and applies damage.
+   * @returns {void}
+   */
+  checkProjectilesHitCharacter() {
+    const now = new Date().getTime();
+    this.level.thrownObjects.forEach((proj) => {
+      if (proj.fromPlayer) return;
+      if (
+        !proj.hasHit &&
+        proj.isColliding &&
+        proj.isColliding(this.character) &&
+        !this.character.isDead(this.character)
+      ) {
+        proj.hasHit = true;
+        proj.markForRemoval = true;
+        if (this.character.HP > 0) {
+          this.charTakeDMG(now);
+        }
+      }
+    });
+
+    this.level.thrownObjects = this.level.thrownObjects.filter((b) => !b.markForRemoval);
+  }
+
+  charTakeDMG(now) {
+    this.character.HP -= 40;
+    this.character.lastHitTime = now;
+    this.character.playAnimation(this.character.IMAGES_HURT);
+    this.character.isDead(this.character);
+    if (!this.character.isTouchingEnemy) {
+      this.character.playSound(this.character);
+    }
   }
 
   /**
@@ -124,7 +176,13 @@ class World {
         const enemyTop = enemy.y;
         const isAbove = characterBottom <= enemyTop + enemy.height * 0.5;
         if (isAbove && this.character.speedY > -10) {
-          this.killEnemy(enemy);
+          if (enemy instanceof Boss) {
+            this.character.bounce();
+            this.character.HP -= 10;
+            this.character.isDead(this.character);
+          } else {
+            this.killEnemy(enemy);
+          }
         } else {
           this.character.isTakingDMG(enemy);
         }
@@ -141,6 +199,7 @@ class World {
    */
   checkBottleHitsEnemy() {
     this.level.thrownObjects.forEach((bottle) => {
+      if (!(bottle instanceof Bottle)) return;
       this.level.enemies.forEach((enemy) => {
         if (bottle.isColliding(enemy) && !bottle.hasHit) {
           bottle.hasHit = true;
@@ -167,7 +226,6 @@ class World {
     this.level.thrownObjects.forEach((bottle) => {
       if (bottle.y > 325) {
         bottle.splash();
-        bottle.markForRemoval = true;
       }
     });
   }
@@ -235,7 +293,7 @@ class World {
       this.winTriggered = true;
       this.endTimeout = setTimeout(() => {
         window.showEndScreen("You win!");
-      }, 3000);
+      }, 2000);
     }
   }
 
@@ -253,7 +311,7 @@ class World {
         this.gameOverTriggered = true;
         this.endTimeout = setTimeout(() => {
           window.showEndScreen("Game over");
-        }, 5000);
+        }, 2000);
       }
     }
   }
@@ -325,7 +383,6 @@ class World {
     } else {
       this.ctx.drawImage(mo.img, mo.x, mo.y, mo.width, mo.height);
     }
-    //mo.drawFrame(this.ctx);
   }
 
   /**

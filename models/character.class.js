@@ -228,12 +228,12 @@ class Character extends MovableObject {
         this.y += this.speedY;
         this.speedY -= this.acceleration;
       }
-    }, 1000 / 4);
+    }, 1000 / 60);
     this.jumpAnimInterval = setInterval(() => {
       if (this.y < 180) {
         this.playAnimation(this.IMAGES_JUMPING);
       }
-    }, 1000 / 8);
+    }, 1000 / 7);
   }
 
   /**
@@ -255,6 +255,7 @@ class Character extends MovableObject {
     bottle.speedX = this.otherDirection ? -4 : 4;
     bottle.speedY = -15;
     bottle.otherDirection = this.otherDirection;
+    bottle.fromPlayer = true;
     bottle.applyGravity(330);
     bottle.animateRotation(bottle.IMAGES_BOTTLE_ROTATION);
     this.world.level.thrownObjects.push(bottle);

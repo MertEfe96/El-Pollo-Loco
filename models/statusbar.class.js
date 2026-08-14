@@ -36,7 +36,7 @@ class StatusBar extends DrawableObject {
    */
   drawStatus(ctx) {
     let hp = this.character.HP;
-    let hpIndex = hp === 100 ? 5 : hp > 79 ? 4 : hp > 59 ? 3 : hp > 39 ? 2 : hp > 19 ? 1 : 0;
+    let hpIndex = hp === 100 ? 5 : hp > 74 ? 4 : hp > 49 ? 3 : hp > 24 ? 2 : hp > 1 ? 1 : 0;
     let hpImg = this.imageCache[this.HP_BAR_IMAGES[hpIndex]];
 
     ctx.drawImage(hpImg, this.x + 10, this.y, 150, 50);
