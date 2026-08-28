@@ -18,11 +18,9 @@ class Egg extends MovableObject {
     super().loadImage("img/4_enemie_boss_chicken/6_egg/egg1.png");
     this.loadImages(this.IMAGES);
     this.loadImages(this.IMAGES_ROTATION);
-    // start a simple rotation animation (uses same image if no frames available)
     this.animateRotation(this.IMAGES_ROTATION, 8);
   }
 
-  // simple removal handler when egg hits something
   remove() {
     this.markForRemoval = true;
   }

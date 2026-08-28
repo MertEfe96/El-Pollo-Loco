@@ -29,7 +29,6 @@ class Boss extends MovableObject {
     this.speed = 3;
 
     this.loadImages(this.IMAGES_ALERT_BOSS);
-    // this.animate(this.IMAGES_ALERT_BOSS);
     this.loadImages(this.IMAGES_BOSS_MOVING);
     this.animateMovement(this.IMAGES_BOSS_MOVING);
   }

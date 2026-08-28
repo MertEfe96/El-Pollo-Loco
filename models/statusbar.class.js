@@ -19,12 +19,9 @@ class StatusBar extends DrawableObject {
     this.height = 80;
     this.x = 20;
     this.y = 20;
-
     this.loadImages(this.HP_BAR_IMAGES);
-
     this.coinImg = new Image();
     this.coinImg.src = "./img/7_statusbars/3_icons/icon_coin.png";
-
     this.bottleImg = new Image();
     this.bottleImg.src = "./img/7_statusbars/3_icons/icon_salsa_bottle.png";
   }
@@ -38,14 +35,11 @@ class StatusBar extends DrawableObject {
     let hp = this.character.HP;
     let hpIndex = hp === 100 ? 5 : hp > 74 ? 4 : hp > 49 ? 3 : hp > 24 ? 2 : hp > 1 ? 1 : 0;
     let hpImg = this.imageCache[this.HP_BAR_IMAGES[hpIndex]];
-
     ctx.drawImage(hpImg, this.x + 10, this.y, 150, 50);
-
     ctx.drawImage(this.coinImg, this.x + 10, this.y + 50, 40, 40);
     ctx.fillStyle = "white";
     ctx.font = "20px Arial";
     ctx.fillText(`${this.character.collectedCoins}`, this.x + 50, this.y + 80);
-
     this.drawThrowCooldown(ctx);
     ctx.drawImage(this.bottleImg, this.x + 115, this.y + 50, 40, 40);
     ctx.fillStyle = "white";
@@ -66,9 +60,7 @@ class StatusBar extends DrawableObject {
     const centerX = this.x + 134;
     const centerY = this.y + 70;
     const radius = 22;
-
     this.drawCircle(ctx, centerX, centerY, radius, hasBottles);
-
     if (hasBottles) {
       ctx.beginPath();
       ctx.arc(centerX, centerY, radius, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * progress);
@@ -111,7 +103,6 @@ class BossStatusBar extends DrawableObject {
     this.height = 80;
     this.x = 540;
     this.y = 10;
-
     this.loadImages(this.BOSS_BAR_IMAGES);
   }
 
@@ -124,14 +115,13 @@ class BossStatusBar extends DrawableObject {
     let hp = this.boss.HP;
     let imgIndex;
     if (hp < 21) {
-      imgIndex = 2; // orange
+      imgIndex = 2;
     } else if (hp < 41) {
-      imgIndex = 1; // green
+      imgIndex = 1;
     } else {
-      imgIndex = 0; // blue
+      imgIndex = 0;
     }
     let img = this.imageCache[this.BOSS_BAR_IMAGES[imgIndex]];
-
     ctx.drawImage(img, this.x, this.y, this.width, this.height);
   }
 }

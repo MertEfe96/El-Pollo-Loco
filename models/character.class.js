@@ -1,7 +1,6 @@
 class Character extends MovableObject {
   width = 150;
   height = 250;
-  // y = 180;
   y = 0;
   speed = 5;
   HP = 100;
@@ -139,29 +138,17 @@ class Character extends MovableObject {
    */
   handleAnimation() {
     const k = this.world.keyboard;
+    const grounded = !this.isAboveGround(180);
+    const canAnimate = grounded && !this.statusDead && !this.world.winTriggered;
+    const moving = k.RIGHT || k.LEFT;
+    const acting = moving || k.SPACE || k.THROW;
     const noKeyPressed = !k.LEFT && !k.RIGHT && !k.UP && !k.DOWN && !k.SPACE;
-    if (noKeyPressed && !this.isAboveGround(180) && !this.statusDead) {
-      if (this.longIdleActive) {
-        this.playAnimation(this.IMAGES_LONG_IDLE);
-      } else {
-        this.idleAnimation();
-      }
-    }
-    if ((k.RIGHT || k.LEFT) && !this.isAboveGround(180) && !this.statusDead && !this.world.winTriggered) {
-      this.moveChar();
-    }
-    if (k.SPACE && !this.isAboveGround(180) && !this.statusDead && !this.world.winTriggered) {
-      this.speedY = -15;
-      this.jumpAnimation();
-    }
-    if (k.THROW && this.checkThrowHelper()) {
-      this.throwAnimation();
-      this.lastInputTime = Date.now();
-    }
-    if ((k.RIGHT || k.LEFT || k.SPACE || k.THROW) && !this.statusDead) {
-      this.lastInputTime = Date.now();
-      this.longIdleActive = false;
-    }
+    if (noKeyPressed && grounded && !this.statusDead)
+      this.longIdleActive ? this.playAnimation(this.IMAGES_LONG_IDLE) : this.idleAnimation();
+    if (moving && canAnimate) this.moveChar();
+    if (k.SPACE && canAnimate) ((this.speedY = -15), this.jumpAnimation());
+    if (k.THROW && this.checkThrowHelper()) this.throwAnimation();
+    if (acting && !this.statusDead) ((this.lastInputTime = Date.now()), (this.longIdleActive = false));
   }
 
   /**

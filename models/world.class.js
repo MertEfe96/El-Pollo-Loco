@@ -60,27 +60,35 @@ class World {
   update(delta = 16.6667) {
     const step = delta / (1000 / 60);
     this.level.clouds.forEach((cloud) => cloud.moveLeft(step));
-    this.level.thrownObjects.forEach((bottle) => {
-      bottle.x += bottle.speedX * step;
-    });
+    this.level.thrownObjects.forEach((bottle) => (bottle.x += bottle.speedX * step));
+    this.updateBossEgg();
+  }
 
-    // Boss throws an egg every 3 seconds while visible on screen
-    if (this.boss && !this.boss.statusDead) {
-      const now = performance.now();
-      if (this.isBossVisible()) {
-        if (!this.lastBossEggTime) this.lastBossEggTime = now;
-        if (now - this.lastBossEggTime >= 3000) {
-          const egg = new Egg();
-          egg.x = this.boss.x + this.boss.width / 2 - egg.width / 2;
-          egg.y = this.boss.y + this.boss.height / 2;
-          egg.speedX = -6; // travels left
-          this.level.thrownObjects.push(egg);
-          this.lastBossEggTime = now;
-        }
-      } else {
-        this.lastBossEggTime = now;
-      }
+  /**
+   * Check if the boss should throw an egg based on timing and visibility.
+   * @returns {void}
+   */
+  updateBossEgg() {
+    if (!this.boss || this.boss.statusDead) return;
+    const now = performance.now();
+    if (!this.isBossVisible()) return (this.lastBossEggTime = now);
+    if (!this.lastBossEggTime) this.lastBossEggTime = now;
+    if (now - this.lastBossEggTime >= 3000) {
+      this.updateEgg();
+      this.lastBossEggTime = now;
     }
+  }
+
+  /**
+   * Update the boss egg.
+   * @returns {void}
+   */
+  updateEgg() {
+    const egg = new Egg();
+    egg.x = this.boss.x + this.boss.width / 2 - egg.width / 2;
+    egg.y = this.boss.y + this.boss.height / 2;
+    egg.speedX = -6;
+    this.level.thrownObjects.push(egg);
   }
 
   /**
@@ -114,24 +122,29 @@ class World {
         proj.isColliding(this.character) &&
         !this.character.isDead(this.character)
       ) {
-        proj.hasHit = true;
-        proj.markForRemoval = true;
-        if (this.character.HP > 0) {
-          this.charTakeDMG(now);
-        }
+        this.charTakeDMG(now, proj);
       }
     });
-
     this.level.thrownObjects = this.level.thrownObjects.filter((b) => !b.markForRemoval);
   }
 
-  charTakeDMG(now) {
-    this.character.HP -= 40;
-    this.character.lastHitTime = now;
-    this.character.playAnimation(this.character.IMAGES_HURT);
-    this.character.isDead(this.character);
-    if (!this.character.isTouchingEnemy) {
-      this.character.playSound(this.character);
+  /**
+   * Handle damage taken by the character.
+   * @param {number} now - The current time.
+   * @param {MovableObject} proj - The projectile that hit the character.
+   * @returns {void}
+   */
+  charTakeDMG(now, proj) {
+    proj.hasHit = true;
+    proj.markForRemoval = true;
+    if (this.character.HP > 0) {
+      this.character.HP -= 40;
+      this.character.lastHitTime = now;
+      this.character.playAnimation(this.character.IMAGES_HURT);
+      this.character.isDead(this.character);
+      if (!this.character.isTouchingEnemy) {
+        this.character.playSound(this.character);
+      }
     }
   }
 
@@ -171,28 +184,38 @@ class World {
   collisionEnemie() {
     const now = new Date().getTime();
     this.level.enemies.forEach((enemy) => {
-      if (this.character.isColliding(enemy) && !this.character.isDead(this.character)) {
-        const characterBottom = this.character.y + this.character.height - 40;
-        const enemyTop = enemy.y;
-        const isAbove = characterBottom <= enemyTop + enemy.height * 0.5;
-        if (isAbove && this.character.speedY > -10) {
-          if (enemy instanceof Boss) {
-            this.character.bounce();
-            this.character.HP -= 10;
-            this.character.isDead(this.character);
-          } else {
-            this.killEnemy(enemy);
-          }
-        } else {
-          this.character.isTakingDMG(enemy);
-        }
-      }
+      this.handleEnemyCollision(enemy);
       if (now - this.character.lastHitTime > this.character.invincibilityDuration) {
         this.character.isTouchingEnemy = false;
       }
     });
   }
 
+  /**
+   * Handle collision between the character and an enemy.
+   * @param {MovableObject} enemy - The enemy to collide with.
+   * @returns {void}
+   */
+  handleEnemyCollision(enemy) {
+    if (!this.character.isColliding(enemy) || this.character.isDead(this.character)) return;
+    const characterBottom = this.character.y + this.character.height - 40;
+    const isAbove = characterBottom <= enemy.y + enemy.height * 0.5;
+    if (isAbove && this.character.speedY > -10) {
+      enemy instanceof Boss ? this.characterTakeDamage() : this.killEnemy(enemy);
+    } else {
+      this.character.isTakingDMG(enemy);
+    }
+  }
+
+  /**
+   * Inflict damage on the character and apply bounce effect.
+   * @returns {void}
+   */
+  characterTakeDamage() {
+    this.character.bounce();
+    this.character.HP -= 10;
+    this.character.isDead(this.character);
+  }
   /**
    * Handle collisions between thrown bottles and enemies.
    * @returns {void}
@@ -212,9 +235,7 @@ class World {
         }
       });
     });
-
     this.level.thrownObjects = this.level.thrownObjects.filter((b) => !b.markForRemoval);
-
     this.level.enemies = this.level.enemies.filter((e) => !e.isDead());
   }
 
@@ -269,14 +290,11 @@ class World {
    */
   draw(timestamp) {
     if (!this.running) return;
-
     const delta = Math.min(timestamp - this.lastFrameTime, 100);
     this.lastFrameTime = timestamp;
-
     this.checkGameOver();
     if (this.gameOverTriggered) return;
     this.checkWinCondition();
-
     this.drawScene(delta);
     this.drawStatusBars();
     this.drawOverlays();
@@ -407,15 +425,12 @@ class World {
    */
   setVolume(value) {
     this.volume = Math.max(0, Math.min(1, value));
-
     if (this.character) {
       this.character.updateVolume();
     }
-
     this.level.enemies.forEach((e) => {
       if (e.deathSound) e.deathSound.volume = this.volume;
     });
-
     if (this.backgroundMusic) {
       this.backgroundMusic.volume = this.volume;
     }

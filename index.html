@@ -29,7 +29,7 @@
   <body onload="init()">
     <h1>EL-POLLO-LOCO</h1>
 
-    <div class="canvasDiv">
+    <div class="canvasDiv" id="canvasDiv">
       <canvas id="canvas" width="760px" height="480px"> </canvas>
       <div class="canvasMenu" id="canvasMenu">
         <div class="volumeControl" onmouseover="showInput('volumeSlider')" onmouseleave="hideInput('volumeSlider')">
@@ -93,9 +93,45 @@
         </ul>
       </div>
     </div>
-    <footer>
-      <p>&copy; 2023 El-Pollo-Loco. All rights reserved.</p>
-      <p><a href="./impressum.html">Impressum</a></p>
+    <div id="impressum" class="impressum-container">
+      <h2>Impressum</h2>
+      <p>Angaben gemäß § 5 TMG:</p>
+      <p>
+        Mert Efe<br />
+        Gerhardstr. 25<br />
+        31241 Ilsede
+      </p>
+      <p>
+        Kontakt:<br />
+        Telefon: +49 123 456789<br />
+        E-Mail: mert.efe@example.com
+      </p>
+    </div>
+    <footer id="footerGame">
+      <p>&copy; 2026 El-Pollo-Loco. All rights reserved.</p>
+      <p>
+        <a
+          href=" "
+          onclick="
+            showImpressum();
+            return false;
+          "
+          >Impressum</a
+        >
+      </p>
+    </footer>
+    <footer id="impressum-footer">
+      <p>&copy; 2026 El-Pollo-Loco. All rights reserved.</p>
+      <p>
+        <a
+          href=" "
+          onclick="
+            hideImpressum();
+            return false;
+          "
+          >← Back to Game</a
+        >
+      </p>
     </footer>
   </body>
 </html>

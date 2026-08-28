@@ -12,7 +12,6 @@ const controls = [
   {id: "btn-jump", key: "Space"},
   {id: "btn-throw", key: "KeyE"},
 ];
-const isTouchFirst = navigator.maxTouchPoints > 0 && matchMedia("(pointer: coarse)").matches;
 
 /**
  * Initialize the game canvas element.
@@ -37,20 +36,6 @@ function startGame() {
   world = new World(canvas, keyboard);
   document.querySelector(".introOutro").style.display = "none";
   getVolumeFromStorage();
-  if (isTouchFirst) {
-    setToMobile();
-  }
-}
-
-function setToMobile() {
-  document.body.classList.add("controls-mobile");
-  document.getElementById("mobile-controls").classList.add("show");
-  document.getElementById("controls").style.display = "none";
-  document.getElementById("canvasMenu").style.bottom = "auto";
-  document.getElementById("canvasMenu").style.top = "30px";
-  document.getElementById("canvasMenu").style.position = "absolute";
-  document.getElementById("canvasMenu").style.right = "25px";
-  document.getElementById("canvasMenu").style.justifyContent = "end";
 }
 
 /**
@@ -110,14 +95,12 @@ window.addEventListener("keydown", (event) => {
   const key = event.code;
   kb.pressed[key] = true;
   keyboard.action(key);
-  // updateKeyStatus();
 });
 
 window.addEventListener("keyup", (event) => {
   const key = event.code;
   kb.pressed[key] = false;
   keyboard.release(key);
-  // updateKeyStatus();
 });
 
 /**
@@ -234,13 +217,6 @@ function coinArcLoop(coins, startAngle, endAngle, radius, count, step, centerX, 
   }
 }
 
-// function updateKeyStatus() {
-//   const pressedKeys = Object.keys(kb.pressed)
-//     .filter((key) => kb.pressed[key])
-//     .join(", ");
-//   document.getElementById("key-status").textContent = pressedKeys || "---";
-// }
-
 window.addEventListener("input", () => {
   const slider = document.getElementById("volumeSlider");
   const volume = parseFloat(slider.value);
@@ -308,10 +284,6 @@ function fullscreen() {
   canvas.requestFullscreen();
 }
 
-// ...Mobile Controls...
-// This function sets up mobile controls for the game
-// It binds touch events to buttons for left, right, jump, and throw actions
-
 /**
  * Configure mobile touch controls for game buttons.
  * @returns {void}
@@ -341,21 +313,17 @@ window.addEventListener("DOMContentLoaded", setMobileControls);
 function initControlToggle() {
   const toggleButton = document.getElementById("controlModeToggle");
   const mobileControls = document.getElementById("mobile-controls");
-
   if (!toggleButton || !mobileControls) return;
-
   const updateToggle = () => {
     const isMobileView = document.body.classList.contains("controls-mobile");
     mobileControls.classList.toggle("show", isMobileView);
     toggleButton.textContent = isMobileView ? "Switch to PC" : "Switch to Mobile";
     toggleButton.setAttribute("aria-pressed", isMobileView ? "true" : "false");
   };
-
   toggleButton.addEventListener("click", () => {
     document.body.classList.toggle("controls-mobile");
     updateToggle();
   });
-
   updateToggle();
 }
 
@@ -373,4 +341,38 @@ function getVolumeFromStorage() {
     }
     checkVolumeLevel(slider, parseFloat(soundSetting));
   }
+}
+
+/**
+ * Show the impressum overlay and hide the game canvas and controls.
+ * @returns {void}
+ */
+function showImpressum() {
+  const impressum = document.getElementById("impressum");
+  const impressumFooter = document.getElementById("impressum-footer");
+  const footerGame = document.getElementById("footerGame");
+  const canvasDiv = document.getElementById("canvasDiv");
+  const controls = document.getElementById("controls");
+  impressum.style.display = "block";
+  impressumFooter.style.display = "block";
+  footerGame.style.display = "none";
+  canvasDiv.style.display = "none";
+  controls.style.display = "none";
+}
+
+/**
+ * Hide the impressum overlay and show the game canvas and controls.
+ * @returns {void}
+ */
+function hideImpressum() {
+  const impressum = document.getElementById("impressum");
+  const impressumFooter = document.getElementById("impressum-footer");
+  const footerGame = document.getElementById("footerGame");
+  const canvasDiv = document.getElementById("canvasDiv");
+  const controls = document.getElementById("controls");
+  impressum.style.display = "none";
+  impressumFooter.style.display = "none";
+  footerGame.style.display = "block";
+  canvasDiv.style.display = "block";
+  controls.style.display = "block";
 }
