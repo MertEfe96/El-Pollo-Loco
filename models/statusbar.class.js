@@ -87,8 +87,10 @@ class StatusBar extends DrawableObject {
 class BossStatusBar extends DrawableObject {
   BOSS_BAR_IMAGES = [
     "./img/7_statusbars/2_statusbar_endboss/blue.png",
-    "./img/7_statusbars/2_statusbar_endboss/green.png",
-    "./img/7_statusbars/2_statusbar_endboss/orange.png",
+    "./img/7_statusbars/2_statusbar_endboss/blue75.png",
+    "./img/7_statusbars/2_statusbar_endboss/blue50.png",
+    "./img/7_statusbars/2_statusbar_endboss/blue25.png",
+    "./img/7_statusbars/2_statusbar_endboss/empty.png",
   ];
 
   /**
@@ -114,9 +116,13 @@ class BossStatusBar extends DrawableObject {
   drawStatus(ctx) {
     let hp = this.boss.HP;
     let imgIndex;
-    if (hp < 21) {
+    if (hp < 5) {
+      imgIndex = 4;
+    } else if (hp < 49) {
+      imgIndex = 3;
+    } else if (hp < 74) {
       imgIndex = 2;
-    } else if (hp < 41) {
+    } else if (hp < 99) {
       imgIndex = 1;
     } else {
       imgIndex = 0;

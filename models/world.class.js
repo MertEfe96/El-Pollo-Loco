@@ -163,10 +163,14 @@ class World {
       this.endTimeout = null;
     }
     if (this.backgroundMusic) {
-      this.backgroundMusic.pause();
-      this.backgroundMusic.currentTime = 0;
-      this.backgroundMusic = null;
+      pauseMusic();
     }
+  }
+
+  pauseMusic() {
+    this.backgroundMusic.pause();
+    this.backgroundMusic.currentTime = 0;
+    this.backgroundMusic = null;
   }
 
   /**
@@ -224,14 +228,11 @@ class World {
     this.level.thrownObjects.forEach((bottle) => {
       if (!(bottle instanceof Bottle)) return;
       this.level.enemies.forEach((enemy) => {
-        if (bottle.isColliding(enemy) && !bottle.hasHit) {
+        if (!bottle.hasHit && bottle.isColliding(enemy)) {
           bottle.hasHit = true;
-          enemy.HP -= 20;
-          if ((bottle && typeof bottle.splash === "function") || bottle.y <= 330) {
-            bottle.splash();
-          } else {
-            bottle.markForRemoval = true;
-          }
+          enemy.HP -= 25;
+          if (typeof bottle.splash === "function" || bottle.y <= 330) bottle.splash();
+          else bottle.markForRemoval = true;
         }
       });
     });
