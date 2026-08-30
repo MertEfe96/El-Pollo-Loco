@@ -1,6 +1,7 @@
 let canvas;
 let world;
 let keyboard = new Keyboard();
+const noContextMenu = document.getElementById("canvas");
 const kb = {
   pressed: {},
   key: {},
@@ -378,3 +379,24 @@ function showImpressum() {
 function hideImpressum() {
   toggleImpressumVisibility(false);
 }
+
+/**
+ * Prevent the context menu from appearing on right-click or touch events on the canvas.
+ */
+noContextMenu.addEventListener("contextmenu", (e) => {
+  e.preventDefault();
+});
+noContextMenu.addEventListener(
+  "touchstart",
+  (e) => {
+    e.preventDefault();
+  },
+  {passive: false},
+);
+noContextMenu.addEventListener(
+  "touchmove",
+  (e) => {
+    e.preventDefault();
+  },
+  {passive: false},
+);
