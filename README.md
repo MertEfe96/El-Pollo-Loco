@@ -37,7 +37,7 @@ Because this project loads local assets in the browser, it should be served thro
 ### Option 1: Python
 
 ```bash
-cd "c:/Users/merte/Documents/Developer Academy/Projekte/aktuelle Projekte/El-Pollo-Loco"
+cd "file path"
 python -m http.server 8000
 ```
 
