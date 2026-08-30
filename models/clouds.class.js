@@ -6,6 +6,7 @@ class Cloud extends MovableObject {
   height = 150;
   /**
    * Create a cloud object with randomized position and speed.
+   * @returns {void}
    */
   constructor() {
     super().loadImage(`./img/5_background/layers/4_clouds/${this.rnd}.png`);

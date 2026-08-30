@@ -1,8 +1,9 @@
 /**
- * Main game world that handles rendering, physics, collisions, and game state.
+ * Base game world that owns the render loop, collision logic, boss behavior,
+ * audio, and the current level and character instance.
  */
 class World {
-  character = new Character();
+  character;
   level = level1;
   volume = 0.5;
   backgroundMusic = null;
@@ -20,32 +21,38 @@ class World {
   lastFrameTime = 0;
   lastBossEggTime = 0;
 
-  constructor(canvas, keyboard) {
-    this.ctx = canvas.getContext("2d");
+  /**
+   * Create a new game world.
+   * @param {HTMLCanvasElement} canvas - The canvas used for drawing the world.
+   * @param {Keyboard} keyboard - The keyboard input handler.
+   * @param {Level} [level=level1] - The level to load into the world.
+   * @returns {void}
+   */
+  constructor(canvas, keyboard, level = level1) {
     this.canvas = canvas;
+    this.ctx = canvas.getContext("2d");
     this.keyboard = keyboard;
+    this.level = level;
+    this.character = new Character();
     this.statusBar = new StatusBar(this.character);
     this.gameOverImage = new Image();
     this.gameOverImage.src = "./img/9_intro_outro_screens/game_over/oh no you lost!.png";
     this.boss = this.level.enemies.find((e) => e instanceof Boss);
     this.bossStatusBar = new BossStatusBar(this.boss);
-    this.lastBossEggTime = 0;
     this.winImage = new Image();
     this.winImage.src = "img/9_intro_outro_screens/game_over/You Win A.png";
-    this.winTriggered = false;
-    this.running = true;
     this.lastFrameTime = performance.now();
-    requestAnimationFrame((t) => this.draw(t));
     this.setWorld();
     this.checkCollisons();
     this.backgroundMusic = new Audio("audio/BGM/juliush-fiesta-en-guadalajara-mariachi-de-la-calle-503318.mp3");
     this.backgroundMusic.loop = true;
     this.backgroundMusic.volume = this.volume;
-    const playPromise = this.backgroundMusic.play();
+    this.backgroundMusic.play().catch(() => {});
+    requestAnimationFrame((t) => this.draw(t));
   }
 
   /**
-   * Associate the character with this world instance.
+   * Attach the character to this world instance.
    * @returns {void}
    */
   setWorld() {
@@ -53,8 +60,8 @@ class World {
   }
 
   /**
-   * Update world elements each frame.
-   * Moves background clouds and thrown objects.
+   * Update world state for one animation frame.
+   * @param {number} [delta=16.6667] - Time elapsed since the last frame.
    * @returns {void}
    */
   update(delta = 16.6667) {
@@ -65,7 +72,7 @@ class World {
   }
 
   /**
-   * Check if the boss should throw an egg based on timing and visibility.
+   * Check whether the boss should spawn a new egg and launch it at the player.
    * @returns {void}
    */
   updateBossEgg() {
@@ -74,25 +81,17 @@ class World {
     if (!this.isBossVisible()) return (this.lastBossEggTime = now);
     if (!this.lastBossEggTime) this.lastBossEggTime = now;
     if (now - this.lastBossEggTime >= 3000) {
-      this.updateEgg();
+      const egg = new Egg();
+      egg.x = this.boss.x + this.boss.width / 2 - egg.width / 2;
+      egg.y = this.boss.y + this.boss.height / 2;
+      egg.speedX = -6;
+      this.level.thrownObjects.push(egg);
       this.lastBossEggTime = now;
     }
   }
 
   /**
-   * Update the boss egg.
-   * @returns {void}
-   */
-  updateEgg() {
-    const egg = new Egg();
-    egg.x = this.boss.x + this.boss.width / 2 - egg.width / 2;
-    egg.y = this.boss.y + this.boss.height / 2;
-    egg.speedX = -6;
-    this.level.thrownObjects.push(egg);
-  }
-
-  /**
-   * Begin periodic collision checks for the world.
+   * Start the collision-tick loop that checks enemies, items, and thrown objects.
    * @returns {void}
    */
   checkCollisons() {
@@ -108,12 +107,11 @@ class World {
   }
 
   /**
-   * Check thrown projectiles (eggs) hitting the player character.
-   * Removes projectiles after hit and applies damage.
+   * Handle hits from enemy projectiles on the player.
    * @returns {void}
    */
   checkProjectilesHitCharacter() {
-    const now = new Date().getTime();
+    const now = Date.now();
     this.level.thrownObjects.forEach((proj) => {
       if (proj.fromPlayer) return;
       if (
@@ -122,19 +120,19 @@ class World {
         proj.isColliding(this.character) &&
         !this.character.isDead(this.character)
       ) {
-        this.charTakeDMG(now, proj);
+        this.characterTakeDamageEgg(proj, now);
       }
     });
     this.level.thrownObjects = this.level.thrownObjects.filter((b) => !b.markForRemoval);
   }
 
   /**
-   * Handle damage taken by the character.
-   * @param {number} now - The current time.
+   * Apply damage to the character when an enemy projectile hits.
    * @param {MovableObject} proj - The projectile that hit the character.
+   * @param {number} now - Current timestamp for cooldown tracking.
    * @returns {void}
    */
-  charTakeDMG(now, proj) {
+  characterTakeDamageEgg(proj, now) {
     proj.hasHit = true;
     proj.markForRemoval = true;
     if (this.character.HP > 0) {
@@ -142,31 +140,25 @@ class World {
       this.character.lastHitTime = now;
       this.character.playAnimation(this.character.IMAGES_HURT);
       this.character.isDead(this.character);
-      if (!this.character.isTouchingEnemy) {
-        this.character.playSound(this.character);
-      }
+      if (!this.character.isTouchingEnemy) this.character.playSound(this.character);
     }
   }
 
   /**
-   * Destroy the world and stop game loops, timeouts, and audio.
+   * Stop all active world timers, intervals, and music.
    * @returns {void}
    */
   destroy() {
     this.running = false;
-    if (this.collisionInterval) {
-      clearInterval(this.collisionInterval);
-      this.collisionInterval = null;
-    }
-    if (this.endTimeout) {
-      clearTimeout(this.endTimeout);
-      this.endTimeout = null;
-    }
-    if (this.backgroundMusic) {
-      pauseMusic();
-    }
+    if (this.collisionInterval) clearInterval(this.collisionInterval);
+    if (this.endTimeout) clearTimeout(this.endTimeout);
+    if (this.backgroundMusic) this.pauseMusic();
   }
 
+  /**
+   * Pause and reset the background music for this world.
+   * @returns {void}
+   */
   pauseMusic() {
     this.backgroundMusic.pause();
     this.backgroundMusic.currentTime = 0;
@@ -174,30 +166,29 @@ class World {
   }
 
   /**
-   * Determine whether the boss object is currently visible on screen.
-   * @returns {boolean}
+   * Check whether the boss is visible inside the current camera view.
+   * @returns {boolean} True when the boss is on screen.
    */
   isBossVisible() {
     return this.boss.x + this.boss.width > -this.camera_x && this.boss.x < -this.camera_x + this.canvas.width;
   }
 
   /**
-   * Handle collision detection between the character and enemies.
+   * Check enemy collisions against the player and resolve damage or kills.
    * @returns {void}
    */
   collisionEnemie() {
-    const now = new Date().getTime();
+    const now = Date.now();
     this.level.enemies.forEach((enemy) => {
       this.handleEnemyCollision(enemy);
-      if (now - this.character.lastHitTime > this.character.invincibilityDuration) {
+      if (now - this.character.lastHitTime > this.character.invincibilityDuration)
         this.character.isTouchingEnemy = false;
-      }
     });
   }
 
   /**
-   * Handle collision between the character and an enemy.
-   * @param {MovableObject} enemy - The enemy to collide with.
+   * Resolve a single enemy collision with the player.
+   * @param {MovableObject} enemy - Enemy currently colliding with the player.
    * @returns {void}
    */
   handleEnemyCollision(enemy) {
@@ -212,7 +203,7 @@ class World {
   }
 
   /**
-   * Inflict damage on the character and apply bounce effect.
+   * Damage the player when the boss or an enemy touches them from the side.
    * @returns {void}
    */
   characterTakeDamage() {
@@ -220,8 +211,9 @@ class World {
     this.character.HP -= 10;
     this.character.isDead(this.character);
   }
+
   /**
-   * Handle collisions between thrown bottles and enemies.
+   * Resolve bottle-to-enemy hits, handle splash logic, and remove dead enemies.
    * @returns {void}
    */
   checkBottleHitsEnemy() {
@@ -241,38 +233,32 @@ class World {
   }
 
   /**
-   * Trigger a bottle splash when it hits the ground.
+   * Trigger a splash animation when a thrown bottle hits the ground.
    * @returns {void}
    */
   checkBottleGroundHit() {
     this.level.thrownObjects.forEach((bottle) => {
-      if (bottle.y > 325) {
-        bottle.splash();
-      }
+      if (bottle.y > 325) bottle.splash();
     });
   }
 
   /**
-   * Handle collisions between the character and collectible objects.
+   * Handle character pickup of coins and bottles.
    * @returns {void}
    */
   collisionCollectable() {
     this.level.collectable.forEach((collectable) => {
       if (this.character.isColliding(collectable) && !this.character.isDead(this.character)) {
-        if (collectable instanceof Coin) {
-          this.character.collectedCoins += 1;
-        }
-        if (collectable instanceof Bottle) {
-          this.character.collectedBottles += 1;
-        }
+        if (collectable instanceof Coin) this.character.collectedCoins += 1;
+        if (collectable instanceof Bottle) this.character.collectedBottles += 1;
         this.level.collectable = this.level.collectable.filter((obj) => obj !== collectable);
       }
     });
   }
 
   /**
-   * Inflict damage on an enemy and bounce the character.
-   * @param {MovableObject} enemy - The enemy to damage.
+   * Damage an enemy after the player jumps onto it and bounce the player.
+   * @param {MovableObject} enemy - The enemy to eliminate or damage.
    * @returns {void}
    */
   killEnemy(enemy) {
@@ -286,7 +272,8 @@ class World {
   }
 
   /**
-   * Main rendering loop for the world. Forces a 60 FPS update rate and draws the scene, status bars, and overlays.
+   * Main animation loop for this world. Updates game state and renders the scene.
+   * @param {number} timestamp - Current frame timestamp from requestAnimationFrame.
    * @returns {void}
    */
   draw(timestamp) {
@@ -299,44 +286,34 @@ class World {
     this.drawScene(delta);
     this.drawStatusBars();
     this.drawOverlays();
-
     requestAnimationFrame((t) => this.draw(t));
   }
 
   /**
-   * Check whether the win condition has been met and trigger the end screen.
+   * Trigger the win screen when the boss is defeated.
    * @returns {void}
    */
   checkWinCondition() {
-    if (this.boss.statusDead && !this.winTriggered) {
+    if (this.boss && this.boss.statusDead && !this.winTriggered) {
       this.winTriggered = true;
-      this.endTimeout = setTimeout(() => {
-        window.showEndScreen("You win!");
-      }, 2000);
+      this.endTimeout = setTimeout(() => window.showEndScreen("You win!"), 2000);
     }
   }
 
   /**
-   * Check whether the character has died and trigger the game over screen.
-   * @returns {void}
-   */
-  /**
-   * Check whether the character has died and trigger the game over screen.
+   * Trigger the game-over screen when the player dies after the death animation ends.
    * @returns {void}
    */
   checkGameOver() {
-    if (this.character.statusDead && this.character.deathAnimationDone) {
-      if (!this.gameOverTriggered) {
-        this.gameOverTriggered = true;
-        this.endTimeout = setTimeout(() => {
-          window.showEndScreen("Game over");
-        }, 2000);
-      }
+    if (this.character.statusDead && this.character.deathAnimationDone && !this.gameOverTriggered) {
+      this.gameOverTriggered = true;
+      this.endTimeout = setTimeout(() => window.showEndScreen("Game over"), 2000);
     }
   }
 
   /**
-   * Draw the world scene to the canvas.
+   * Render the entire game scene for the current frame.
+   * @param {number} delta - Delta time since the last frame.
    * @returns {void}
    */
   drawScene(delta) {
@@ -353,60 +330,49 @@ class World {
   }
 
   /**
-   * Draw the status bars for the player and boss.
+   * Draw the player and boss status bars.
    * @returns {void}
    */
   drawStatusBars() {
     this.statusBar.drawStatus(this.ctx);
-    if (this.isBossVisible()) {
-      this.bossStatusBar.drawStatus(this.ctx);
-    }
+    if (this.isBossVisible()) this.bossStatusBar.drawStatus(this.ctx);
   }
 
   /**
-   * Draw overlay images such as game over and win screens.
+   * Draw win/game-over overlays on top of the scene.
    * @returns {void}
    */
   drawOverlays() {
     if (this.character.statusDead && !this.character.deathAnimationDone) {
       this.ctx.drawImage(this.gameOverImage, 0, 0, this.canvas.width, this.canvas.height);
     }
-    if (this.boss.statusDead) {
+    if (this.boss && this.boss.statusDead)
       this.ctx.drawImage(this.winImage, 0, 0, this.canvas.width, this.canvas.height);
-    }
   }
 
   /**
-   * Add all provided objects to the render queue.
-   * @param {Array<DrawableObject>} objects - Objects to draw.
+   * Draw a list of map objects into the canvas.
+   * @param {Array<DrawableObject>} objects - Objects to render.
    * @returns {void}
    */
   addObjectsToMap(objects) {
-    objects.forEach((o) => {
-      this.addMapObject(o);
-    });
+    objects.forEach((o) => this.addMapObject(o));
   }
 
   /**
-   * Draw a single map object to the canvas.
-   * @param {DrawableObject} mo - The object to render.
+   * Draw a single map object, mirroring it if needed.
+   * @param {DrawableObject} mo - Object to draw.
    * @returns {void}
    */
   addMapObject(mo) {
-    if (!mo || !mo.img || !(mo.img instanceof HTMLImageElement)) {
-      return;
-    }
-
-    if (mo.otherDirection) {
-      this.flipImage(mo);
-    } else {
-      this.ctx.drawImage(mo.img, mo.x, mo.y, mo.width, mo.height);
-    }
+    if (!mo || !mo.img || !(mo.img instanceof HTMLImageElement)) return;
+    if (mo.otherDirection) this.flipImage(mo);
+    else this.ctx.drawImage(mo.img, mo.x, mo.y, mo.width, mo.height);
   }
 
   /**
-   * Flip the rendering context horizontally for mirrored objects.
-   * @param {DrawableObject} mo - The object to draw flipped.
+   * Render a mirrored image for objects facing left.
+   * @param {DrawableObject} mo - Object to flip while drawing.
    * @returns {void}
    */
   flipImage(mo) {
@@ -417,31 +383,5 @@ class World {
       this.ctx.drawImage(mo.img, 0, mo.y, mo.width, mo.height);
     }
     this.ctx.restore();
-  }
-
-  /**
-   * Set the global world audio volume.
-   * @param {number} value - A normalized volume value between 0 and 1.
-   * @returns {void}
-   */
-  setVolume(value) {
-    this.volume = Math.max(0, Math.min(1, value));
-    if (this.character) {
-      this.character.updateVolume();
-    }
-    this.level.enemies.forEach((e) => {
-      if (e.deathSound) e.deathSound.volume = this.volume;
-    });
-    if (this.backgroundMusic) {
-      this.backgroundMusic.volume = this.volume;
-    }
-  }
-
-  /**
-   * Retrieve the current world audio volume.
-   * @returns {number}
-   */
-  getVolume() {
-    return this.volume;
   }
 }

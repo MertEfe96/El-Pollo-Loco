@@ -40,6 +40,7 @@ class Bottle extends MovableObject {
   markForRemoval = false;
   isSplashing = false;
   hasHit = false;
+  splashFrame = 0;
 
   /**
    * Play the bottle splash animation when the bottle hits an enemy or the ground.
@@ -51,17 +52,25 @@ class Bottle extends MovableObject {
     this.currentImage = 0;
     this.speedX = 0;
     this.speedY = 0;
-
-    let i = 0;
+    this.splashFrame = 0;
     const splashInterval = setInterval(() => {
-      if (i < this.IMAGES_BOTTLE_SPLASH.length) {
-        const path = this.IMAGES_BOTTLE_SPLASH[i];
-        if (this.imageCache[path]) this.img = this.imageCache[path];
-        i++;
-      } else {
-        clearInterval(splashInterval);
-        this.markForRemoval = true;
-      }
+      this.splashAnimation(splashInterval);
     }, 1000 / 8);
+  }
+
+  /**
+   * Advance the bottle splash animation frame by frame.
+   * @param {number} splashInterval - The timer ID for the splash interval.
+   * @returns {void}
+   */
+  splashAnimation(splashInterval) {
+    if (this.splashFrame < this.IMAGES_BOTTLE_SPLASH.length) {
+      const path = this.IMAGES_BOTTLE_SPLASH[this.splashFrame];
+      if (this.imageCache[path]) this.img = this.imageCache[path];
+      this.splashFrame++;
+    } else {
+      clearInterval(splashInterval);
+      this.markForRemoval = true;
+    }
   }
 }

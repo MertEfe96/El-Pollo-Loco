@@ -1,3 +1,6 @@
+/**
+ * Boss projectile representing an egg thrown by the boss.
+ */
 class Egg extends MovableObject {
   width = 40;
   height = 40;
@@ -14,6 +17,10 @@ class Egg extends MovableObject {
     "img/4_enemie_boss_chicken/6_egg/egg4.png",
   ];
 
+  /**
+   * Create a new egg projectile and start its rotation animation.
+   * @returns {void}
+   */
   constructor() {
     super().loadImage("img/4_enemie_boss_chicken/6_egg/egg1.png");
     this.loadImages(this.IMAGES);
@@ -21,6 +28,10 @@ class Egg extends MovableObject {
     this.animateRotation(this.IMAGES_ROTATION, 8);
   }
 
+  /**
+   * Mark the egg for removal from the game world.
+   * @returns {void}
+   */
   remove() {
     this.markForRemoval = true;
   }

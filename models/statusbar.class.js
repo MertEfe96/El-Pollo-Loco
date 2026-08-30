@@ -11,6 +11,7 @@ class StatusBar extends DrawableObject {
   /**
    * Create a player status bar that displays HP, coins, and bottles.
    * @param {Character} character - The player character instance.
+   * @returns {void}
    */
   constructor(character) {
     super();
@@ -60,7 +61,7 @@ class StatusBar extends DrawableObject {
     const centerX = this.x + 134;
     const centerY = this.y + 70;
     const radius = 22;
-    this.drawCircle(ctx, centerX, centerY, radius, hasBottles);
+    this.drawCircle(ctx, centerX, centerY, radius, progress, hasBottles, isReady);
     if (hasBottles) {
       ctx.beginPath();
       ctx.arc(centerX, centerY, radius, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * progress);
@@ -70,7 +71,18 @@ class StatusBar extends DrawableObject {
     }
   }
 
-  drawCircle(ctx, centerX, centerY, radius, progress, hasBottles) {
+  /**
+   * Draw the circular cooldown ring for bottle readiness.
+   * @param {CanvasRenderingContext2D} ctx - The drawing context.
+   * @param {number} centerX - The center X coordinate of the circle.
+   * @param {number} centerY - The center Y coordinate of the circle.
+   * @param {number} radius - The radius of the circle.
+   * @param {number} progress - Current progress ratio for the cooldown.
+   * @param {boolean} hasBottles - Whether the player currently has bottles to throw.
+   * @param {boolean} isReady - Indicates whether the cooldown is complete and the player can throw.
+   * @returns {void}
+   */
+  drawCircle(ctx, centerX, centerY, radius, progress, hasBottles, isReady) {
     ctx.beginPath();
     if (!hasBottles) {
       ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);

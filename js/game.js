@@ -33,7 +33,7 @@ function startGame() {
     world = null;
   }
   initLevel();
-  world = new World(canvas, keyboard);
+  world = new WorldTwo(canvas, keyboard);
   document.querySelector(".introOutro").style.display = "none";
   getVolumeFromStorage();
 }
@@ -262,8 +262,8 @@ function checkVolumeLevel(slider, volume) {
  * @returns {void}
  */
 function showInput(id) {
-  input = document.getElementById(id);
-  input.style.display = "block";
+  const input = document.getElementById(id);
+  input.classList.remove("hidden");
 }
 
 /**
@@ -272,8 +272,8 @@ function showInput(id) {
  * @returns {void}
  */
 function hideInput(id) {
-  input = document.getElementById(id);
-  input.style.display = "none";
+  const input = document.getElementById(id);
+  input.classList.add("hidden");
 }
 
 /**
@@ -294,12 +294,10 @@ function setMobileControls() {
     btn.addEventListener("touchstart", (e) => {
       e.preventDefault();
       keyboard.action(key);
-      updateKeyStatus();
     });
     btn.addEventListener("touchend", (e) => {
       e.preventDefault();
       keyboard.release(key);
-      updateKeyStatus();
     });
   });
 }
@@ -344,20 +342,33 @@ function getVolumeFromStorage() {
 }
 
 /**
+ * Toggle the impressum and game UI visibility state.
+ * @param {boolean} isVisible - Whether the impressum should be visible.
+ * @returns {void}
+ */
+function toggleImpressumVisibility(isVisible) {
+  const visibleIds = ["impressum", "impressum-footer"];
+  const hiddenIds = ["footerGame", "canvasDiv", "controls"];
+
+  visibleIds.forEach((id) => {
+    const element = document.getElementById(id);
+    if (!element) return;
+    element.classList.toggle("hidden", !isVisible);
+  });
+
+  hiddenIds.forEach((id) => {
+    const element = document.getElementById(id);
+    if (!element) return;
+    element.classList.toggle("hidden", isVisible);
+  });
+}
+
+/**
  * Show the impressum overlay and hide the game canvas and controls.
  * @returns {void}
  */
 function showImpressum() {
-  const impressum = document.getElementById("impressum");
-  const impressumFooter = document.getElementById("impressum-footer");
-  const footerGame = document.getElementById("footerGame");
-  const canvasDiv = document.getElementById("canvasDiv");
-  const controls = document.getElementById("controls");
-  impressum.style.display = "block";
-  impressumFooter.style.display = "block";
-  footerGame.style.display = "none";
-  canvasDiv.style.display = "none";
-  controls.style.display = "none";
+  toggleImpressumVisibility(true);
 }
 
 /**
@@ -365,14 +376,5 @@ function showImpressum() {
  * @returns {void}
  */
 function hideImpressum() {
-  const impressum = document.getElementById("impressum");
-  const impressumFooter = document.getElementById("impressum-footer");
-  const footerGame = document.getElementById("footerGame");
-  const canvasDiv = document.getElementById("canvasDiv");
-  const controls = document.getElementById("controls");
-  impressum.style.display = "none";
-  impressumFooter.style.display = "none";
-  footerGame.style.display = "block";
-  canvasDiv.style.display = "block";
-  controls.style.display = "block";
+  toggleImpressumVisibility(false);
 }

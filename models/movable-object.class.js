@@ -6,7 +6,7 @@ class MovableObject extends DrawableObject {
   offset = {
     top: 0,
     bottom: 0,
-    left: 0,
+    left: 50,
     right: 0,
   };
 

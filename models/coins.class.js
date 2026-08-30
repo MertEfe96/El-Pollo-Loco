@@ -11,6 +11,7 @@ class Coin extends MovableObject {
 
   /**
    * Create a floating coin collectible with a vertical bobbing motion.
+   * @returns {void}
    */
   constructor() {
     super().loadImage(this.IMAGES_FLOATING_COIN[0]);

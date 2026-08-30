@@ -6,6 +6,10 @@ class Chicken extends MovableObject {
     "./img/3_enemies_chicken/chicken_normal/1_walk/3_w.png",
   ];
 
+  /**
+   * Create a normal chicken enemy with a random position, HP, and walk animation.
+   * @returns {void}
+   */
   constructor() {
     super().loadImage("./img/3_enemies_chicken/chicken_normal/1_walk/1_w.png");
     this.x = 350 + Math.random() * 1550;

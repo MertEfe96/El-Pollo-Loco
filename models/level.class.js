@@ -11,6 +11,7 @@ class Level {
    * @param {Array<Cloud>} clouds - Cloud objects.
    * @param {Array<Background>} background - Background layers.
    * @param {Array<MovableObject>} collectable - Collectable objects.
+   * @returns {void}
    */
   constructor(enemies, clouds, background, collectable) {
     this.enemies = enemies;

@@ -84,6 +84,7 @@ class Character extends MovableObject {
 
   /**
    * Create the player character and preload animations.
+   * @returns {void}
    */
   constructor() {
     super().loadImage("./img/2_character_pepe/1_idle/idle/I-1.png");
@@ -116,6 +117,7 @@ class Character extends MovableObject {
    * @returns {void}
    */
   handleMovement() {
+    if (!this.world || !this.world.keyboard) return;
     const {RIGHT, LEFT} = this.world.keyboard;
     if (RIGHT && this.x < 2800 && !this.statusDead && !this.world.winTriggered) {
       this.x += this.speed;
@@ -137,6 +139,7 @@ class Character extends MovableObject {
    * @returns {void}
    */
   handleAnimation() {
+    if (!this.world || !this.world.keyboard) return;
     const k = this.world.keyboard;
     const grounded = !this.isAboveGround(180);
     const canAnimate = grounded && !this.statusDead && !this.world.winTriggered;
@@ -244,7 +247,7 @@ class Character extends MovableObject {
     bottle.otherDirection = this.otherDirection;
     bottle.fromPlayer = true;
     bottle.applyGravity(330);
-    bottle.animateRotation(bottle.IMAGES_BOTTLE_ROTATION);
+    bottle.animateRotation(bottle.IMAGES_BOTTLE_ROTATION, 8);
     this.world.level.thrownObjects.push(bottle);
   }
 

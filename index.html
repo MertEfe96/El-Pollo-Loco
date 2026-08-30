@@ -10,6 +10,7 @@
     <script src="./models/chicken.class.js"></script>
     <script src="./models/boss.class.js"></script>
     <script src="./models/world.class.js"></script>
+    <script src="./models/world-two.class.js"></script>
     <script src="./models/coins.class.js"></script>
     <script src="./models/clouds.class.js"></script>
     <script src="./models/background.class.js"></script>
@@ -34,11 +35,9 @@
       <div class="canvasMenu" id="canvasMenu">
         <div class="volumeControl" onmouseover="showInput('volumeSlider')" onmouseleave="hideInput('volumeSlider')">
           <img src="./img/11_Icons/Volume_Icon.png" class="volumeIcon" id="volumeIcon" alt="" onclick="muteGame()" />
-          <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="0.5" />
+          <input class="hidden" type="range" id="volumeSlider" min="0" max="1" step="0.01" value="0.5" />
         </div>
-        <div class="canvasButtons">
-          <img src="./img/11_Icons/Fullscreen.png" class="fullscreenIcon" onclick="fullscreen()" />
-        </div>
+        <div class="canvasButtons"></div>
       </div>
       <div class="mobile-controls" id="mobile-controls">
         <div class="mobileDiv jc-sb">
@@ -57,7 +56,7 @@
           <div class="screen-panel" id="start-screen">
             <button onclick="startGame()" id="startButton">START</button>
             <button id="impressumButton">
-              <a class="impressumButtonLink" href="./impressum.html">Impressum</a>
+              <a class="impressumButtonLink" href="" onclick="showImpressum(); return false;"">Impressum</a>
             </button>
           </div>
           <div class="screen-panel" id="end-screen">
@@ -66,7 +65,7 @@
               <button onclick="restartGame()" id="restartButton">Restart</button>
               <button onclick="quitGame()" id="quitButton">Back to Menu</button>
               <button id="impressumButton">
-                <a class="impressumButtonLink" href="./impressum.html">Impressum</a>
+                <a class="impressumButtonLink" href="" onclick="showImpressum(); return false;">Impressum</a>
               </button>
             </div>
           </div>
@@ -93,7 +92,7 @@
         </ul>
       </div>
     </div>
-    <div id="impressum" class="impressum-container">
+    <div id="impressum" class="impressum-container hidden">
       <h2>Impressum</h2>
       <p>Angaben gemäß § 5 TMG:</p>
       <p>
@@ -120,7 +119,7 @@
         >
       </p>
     </footer>
-    <footer id="impressum-footer">
+    <footer id="impressum-footer" class="hidden">
       <p>&copy; 2026 El-Pollo-Loco. All rights reserved.</p>
       <p>
         <a
